@@ -15,8 +15,9 @@ public class WinningNumbersRepositoryAdapter implements WinningNumbersRepository
     private final WinningNumbersJpaRepository repository;
 
     @Override
-    public void save(WinningNumbers winningNumbers) {
-        repository.save(WinningNumbersEntity.fromDomain(winningNumbers));
+    public WinningNumbers save(WinningNumbers winningNumbers) {
+        WinningNumbersEntity saved = repository.save(WinningNumbersEntity.fromDomain(winningNumbers));
+        return saved.toDomain();
     }
 
     @Override
