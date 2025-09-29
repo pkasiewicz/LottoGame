@@ -1,8 +1,9 @@
 package pl.pkasiewicz.lottogame.numbergenerator.domain;
 
-import java.util.Set;
+import java.time.LocalDateTime;
 
 public interface NumberGeneratorUseCase {
 
-    Set<Integer> generateWinningNumbers();
+    WinningNumbers generateWinningNumbers();
+    WinningNumbers retrieveWinningNumbersByDate(LocalDateTime date);
 }
