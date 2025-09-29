@@ -1,7 +1,6 @@
 package pl.pkasiewicz.lottogame.numbergenerator.domain;
 
 import lombok.Data;
-import pl.pkasiewicz.lottogame.numbergenerator.infrastructure.WinningNumbersEntity;
 
 import java.time.LocalDateTime;
 import java.util.Set;

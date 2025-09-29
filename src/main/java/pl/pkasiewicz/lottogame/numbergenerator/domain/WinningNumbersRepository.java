@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public interface WinningNumbersRepository {
 
-    void save(WinningNumbers winningNumbers);
+    WinningNumbers save(WinningNumbers winningNumbers);
     Optional<WinningNumbers> findByDate(LocalDateTime date);
     boolean existsByDate(LocalDateTime date);
 }
