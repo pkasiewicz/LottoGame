@@ -1,6 +1,8 @@
 package pl.pkasiewicz.lottogame.numbergenerator.application;
 
 import lombok.RequiredArgsConstructor;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.exception.InvalidNumberCountException;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.exception.NumberOutOfRangeException;
 
 import java.util.Set;
 
@@ -16,7 +18,7 @@ class WinningNumbersValidator {
 
     private void validateCount(Set<Integer> numbers) {
         if (numbers.size() != properties.count()) {
-            throw new IllegalArgumentException("Expected " + properties.count() + " numbers, got " + numbers.size());
+            throw new InvalidNumberCountException("Expected " + properties.count() + " numbers, got " + numbers.size());
         }
     }
 
@@ -25,7 +27,7 @@ class WinningNumbersValidator {
                 .anyMatch(number -> number < properties.lowerBand() || number > properties.upperBand());
 
         if (hasInvalidNumbers) {
-            throw new IllegalArgumentException("Numbers must be between " + properties.lowerBand() + " and " + properties.upperBand());
+            throw new NumberOutOfRangeException("Numbers must be between " + properties.lowerBand() + " and " + properties.upperBand());
         }
     }
 }
