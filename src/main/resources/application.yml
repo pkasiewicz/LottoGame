@@ -1,1 +1,29 @@
-spring.application.name=LottoGame
+spring:
+  application:
+    name: LottoGame
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lotto_db
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+lotto:
+  numbers-generator:
+    count: 25
+    lowerBand: 1
+    upperBand: 99
+  number-receiver:
+    count: 6
+    lower-band: 1
+    upper-band: 49
+
+server:
+  port: 8080
