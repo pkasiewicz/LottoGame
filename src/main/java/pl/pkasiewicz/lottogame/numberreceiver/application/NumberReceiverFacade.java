@@ -1,10 +1,13 @@
 package pl.pkasiewicz.lottogame.numberreceiver.application;
 
 import org.springframework.stereotype.Service;
+import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
 import pl.pkasiewicz.lottogame.domain.IdGenerable;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.*;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketId;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -13,18 +16,18 @@ import java.util.Set;
 public class NumberReceiverFacade implements NumberReceiverUseCase {
 
     private final NumberReceiverValidator validator;
-    private final DrawDateGenerator drawDateGenerator;
     private final TicketRepository repository;
     private final IdGenerable idGenerator;
+    private final DrawDateGenerable drawDateGenerator;
 
     public NumberReceiverFacade(NumberReceiverProperties properties,
                                 TicketRepository repository,
                                 IdGenerable idGenerator,
-                                Clock clock) {
+                                DrawDateGenerable drawDateGenerator) {
         this.validator = new NumberReceiverValidator(properties);
-        this.drawDateGenerator = new DrawDateGenerator(clock);
         this.repository = repository;
         this.idGenerator = idGenerator;
+        this.drawDateGenerator = drawDateGenerator;
     }
 
     @Override
