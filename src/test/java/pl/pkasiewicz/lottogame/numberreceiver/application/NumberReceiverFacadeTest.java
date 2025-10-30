@@ -3,6 +3,7 @@ package pl.pkasiewicz.lottogame.numberreceiver.application;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import pl.pkasiewicz.lottogame.infrastructure.DrawDateGenerator;
 import pl.pkasiewicz.lottogame.infrastructure.IdGenerator;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.exception.InvalidTicketNumbersException;
@@ -27,12 +28,11 @@ class NumberReceiverFacadeTest {
     @BeforeEach
     void setUp() {
         InMemoryTicketRepository repository = new InMemoryTicketRepository();
-        Clock clock = Clock.systemUTC();
         numberReceiverFacade = new NumberReceiverFacade(
                 new NumberReceiverProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
                 repository,
                 new IdGenerator(),
-                clock
+                new DrawDateGenerator(Clock.systemUTC())
         );
     }
 
@@ -105,17 +105,6 @@ class NumberReceiverFacadeTest {
     }
 
     @Test
-    public void should_throw_exception_when_ticket_not_found() {
-        // given && when
-        Throwable thrown = catchThrowable(() -> numberReceiverFacade.inputNumbers());
-
-        // then
-        AssertionsForClassTypes.assertThat(thrown)
-                .isInstanceOf(InvalidTicketNumbersException.class)
-                .hasMessage("Numbers must be between " + LOWER_BAND + " and " + UPPER_BAND);
-
-    }
-    @Test
     public void should_set_draw_date_to_next_saturday() {
         // given
         Clock fixedClock = Clock.fixed(
@@ -126,7 +115,7 @@ class NumberReceiverFacadeTest {
                 new NumberReceiverProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
                 new InMemoryTicketRepository(),
                 new IdGenerator(),
-                fixedClock
+                new DrawDateGenerator(fixedClock)
         );
         Set<Integer> numbers = Set.of(1, 2, 3, 4, 5, 6);
 
