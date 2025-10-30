@@ -1,20 +1,14 @@
 package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LocalRandomNumberGeneratorTest {
+class RandomNumberGeneratorTest {
 
-    private LocalRandomNumberGenerator generator;
-
-    @BeforeEach
-    void setUp() {
-        generator = new LocalRandomNumberGenerator();
-    }
+    private final RandomNumberGenerator generator = new RandomNumberGenerator();
 
     @Test
     public void should_generate_six_unique_numbers() {
