@@ -10,7 +10,10 @@ import pl.pkasiewicz.lottogame.numberreceiver.domain.exception.InvalidTicketNumb
 import pl.pkasiewicz.lottogame.numberreceiver.domain.exception.InvalidTicketSizeException;
 import pl.pkasiewicz.lottogame.numberreceiver.testhelpers.InMemoryTicketRepository;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -27,10 +30,9 @@ class NumberReceiverFacadeTest {
 
     @BeforeEach
     void setUp() {
-        InMemoryTicketRepository repository = new InMemoryTicketRepository();
         numberReceiverFacade = new NumberReceiverFacade(
                 new NumberReceiverProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
-                repository,
+                new InMemoryTicketRepository(),
                 new IdGenerator(),
                 new DrawDateGenerator(Clock.systemUTC())
         );
@@ -78,7 +80,7 @@ class NumberReceiverFacadeTest {
     }
 
     @Test
-    public void should_throw_exception_when_user_gave_at_least_one_number_out_of_range_of_1_to_99() {
+    public void should_throw_exception_when_user_gave_at_least_one_number_out_of_range() {
         // given
         Set<Integer> numbers = Set.of(1, 2, 3, 4, 5, 2000);
 
@@ -107,16 +109,7 @@ class NumberReceiverFacadeTest {
     @Test
     public void should_set_draw_date_to_next_saturday() {
         // given
-        Clock fixedClock = Clock.fixed(
-                LocalDateTime.of(2025, 10, 29, 10, 0).toInstant(ZoneOffset.UTC),
-                ZoneId.of("UTC")
-        );
-        NumberReceiverFacade numberReceiverFacade = new NumberReceiverFacade(
-                new NumberReceiverProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
-                new InMemoryTicketRepository(),
-                new IdGenerator(),
-                new DrawDateGenerator(fixedClock)
-        );
+        NumberReceiverFacade numberReceiverFacade = createFacadeWithFixedClock(2025, 10, 29, 10, 0);
         Set<Integer> numbers = Set.of(1, 2, 3, 4, 5, 6);
 
         // when
@@ -125,5 +118,18 @@ class NumberReceiverFacadeTest {
         // then
         LocalDateTime expectedDrawDate = LocalDateTime.of(2025, 11, 1, 12, 0);
         assertThat(result.getDrawDate()).isEqualTo(expectedDrawDate);
+    }
+
+    private NumberReceiverFacade createFacadeWithFixedClock(int year, int month, int day, int hour, int minute) {
+        Clock fixedClock = Clock.fixed(
+                LocalDateTime.of(year, month, day, hour, minute).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")
+        );
+        return new NumberReceiverFacade(
+                new NumberReceiverProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
+                new InMemoryTicketRepository(),
+                new IdGenerator(),
+                new DrawDateGenerator(fixedClock)
+        );
     }
 }
