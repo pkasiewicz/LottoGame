@@ -1,8 +1,6 @@
 package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,9 +18,15 @@ import java.util.UUID;
 public class WinningNumbersEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @ElementCollection
+    @CollectionTable(
+            name = "winning_numbers_values",
+            joinColumns = @JoinColumn(name = "winning_numbers_id")
+    )
+    @Column(name = "number", nullable = false)
     private Set<Integer> winningNumbers;
 
     @Column(nullable = false)

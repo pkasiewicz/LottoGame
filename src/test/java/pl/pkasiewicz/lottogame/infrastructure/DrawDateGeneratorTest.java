@@ -1,4 +1,4 @@
-package pl.pkasiewicz.lottogame.numberreceiver.application;
+package pl.pkasiewicz.lottogame.infrastructure;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,7 @@
-package pl.pkasiewicz.lottogame.numberreceiver.application;
+package pl.pkasiewicz.lottogame.infrastructure;
+
+import org.springframework.stereotype.Component;
+import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
 
 import java.time.Clock;
 import java.time.DayOfWeek;
@@ -7,7 +10,8 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 
-class DrawDateGenerator {
+@Component
+public class DrawDateGenerator implements DrawDateGenerable {
 
     private static final LocalTime DRAW_TIME = LocalTime.of(12,0, 0);
     private static final TemporalAdjuster NEXT_DRAW_TIME = TemporalAdjusters.next(DayOfWeek.SATURDAY);
@@ -17,7 +21,8 @@ class DrawDateGenerator {
         this.clock = clock;
     }
 
-    LocalDateTime getNextDrawDate() {
+    @Override
+    public LocalDateTime getNextDrawDate() {
         LocalDateTime currentDateTime = LocalDateTime.now(clock);
         if (isSaturdayAndBeforeNoon(currentDateTime)) {
             return LocalDateTime.of(currentDateTime.toLocalDate(), DRAW_TIME);

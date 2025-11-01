@@ -6,4 +6,5 @@ public interface NumberGeneratorUseCase {
 
     WinningNumbers generateWinningNumbers();
     WinningNumbers retrieveWinningNumbersByDate(LocalDateTime date);
+        boolean areWinningNumbersGeneratedByDate();
 }
