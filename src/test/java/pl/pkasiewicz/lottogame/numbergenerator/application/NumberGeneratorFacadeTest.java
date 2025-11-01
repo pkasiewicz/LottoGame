@@ -1,37 +1,39 @@
 package pl.pkasiewicz.lottogame.numbergenerator.application;
 
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import pl.pkasiewicz.lottogame.infrastructure.DrawDateGenerator;
 import pl.pkasiewicz.lottogame.infrastructure.IdGenerator;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersId;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.exception.WinningNumbersNotFoundException;
 import pl.pkasiewicz.lottogame.numbergenerator.testhelpers.AdjustableRandomNumbersGenerator;
 import pl.pkasiewicz.lottogame.numbergenerator.testhelpers.InMemoryWinningNumbersRepository;
 
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
-@ExtendWith(MockitoExtension.class)
 class NumberGeneratorFacadeTest {
 
     private static final int EXPECTED_COUNT = 6;
     private static final int LOWER_BAND = 1;
     private static final int UPPER_BAND = 99;
 
-    private final NumberGeneratorFacade numberGeneratorFacade = new NumberGeneratorFacade(
-            new AdjustableRandomNumbersGenerator(),
-            new NumberGeneratorProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
-            new InMemoryWinningNumbersRepository(),
-            new IdGenerator()
-    );
+    private NumberGeneratorFacade numberGeneratorFacade;
 
+    @BeforeEach
+    void setUp() {
+        numberGeneratorFacade = new NumberGeneratorFacade(
+                new AdjustableRandomNumbersGenerator(),
+                new NumberGeneratorProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
+                new InMemoryWinningNumbersRepository(),
+                new IdGenerator(),
+                new DrawDateGenerator(Clock.systemUTC())
+        );
+    }
 
     @Test
     public void should_generate_valid_random_numbers() {
@@ -49,48 +51,77 @@ class NumberGeneratorFacadeTest {
     @Test
     public void should_return_existing_numbers_when_date_already_exists() {
         // given
-        LocalDateTime date = LocalDateTime.now();
-        WinningNumbers expected = new WinningNumbers(
-                new WinningNumbersId(UUID.randomUUID()),
-                Set.of(1, 2, 3, 4, 5, 6),
-                date
-        );
+        WinningNumbers existingNumbers = numberGeneratorFacade.generateWinningNumbers();
 
         // when
         WinningNumbers result = numberGeneratorFacade.generateWinningNumbers();
 
         // then
-        assertThat(result).isEqualTo(expected);
+        assertThat(result).usingRecursiveComparison().isEqualTo(existingNumbers);
     }
 
     @Test
     public void should_retrieve_winning_numbers_by_date() {
         // given
-        LocalDateTime date = LocalDateTime.now();
-        WinningNumbers expected = new WinningNumbers(
-                new WinningNumbersId(UUID.randomUUID()),
-                Set.of(1, 2, 3, 4, 5, 6),
-                date
-        );
+        NumberGeneratorFacade numberGeneratorFacade = createFacadeWithFixedClock(2025, 10, 29, 10, 0);
+        numberGeneratorFacade.generateWinningNumbers();
 
         // when
-        WinningNumbers actual = numberGeneratorFacade.retrieveWinningNumbersByDate(date);
+        LocalDateTime expectedDrawDate = LocalDateTime.of(2025, 11, 1, 12, 0);
+        WinningNumbers result = numberGeneratorFacade.retrieveWinningNumbersByDate(expectedDrawDate);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(result.getDate()).isEqualTo(expectedDrawDate);
+        assertThat(result.getWinningNumbers()).hasSize(EXPECTED_COUNT);
     }
 
     @Test
-    public void should_throw_exception_when_numbers_not_found_for_date() {
+    void should_throw_exception_when_numbers_not_found_for_date() {
         // given
-        LocalDateTime date = LocalDateTime.now();
+        LocalDateTime nonExistentDate = LocalDateTime.of(2020, 1, 1, 12, 0);
 
         // when
-        Throwable thrown = catchThrowable(numberGeneratorFacade::generateWinningNumbers);
+        Throwable thrown = catchThrowable(() -> numberGeneratorFacade.retrieveWinningNumbersByDate(nonExistentDate));
 
         // then
         AssertionsForClassTypes.assertThat(thrown)
                 .isInstanceOf(WinningNumbersNotFoundException.class)
-                .hasMessage("No number found for date: " + date);
+                .hasMessage("Winning numbers for date: " + nonExistentDate + " not found");
+    }
+
+    @Test
+    void should_return_true_when_winning_numbers_generated_for_next_draw_date() {
+        // given
+        NumberGeneratorFacade numberGeneratorFacade = createFacadeWithFixedClock(2025, 10, 29, 10, 0);
+        numberGeneratorFacade.generateWinningNumbers();
+
+        // when
+        boolean result = numberGeneratorFacade.areWinningNumbersGeneratedByDate();
+
+        // then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void should_return_false_when_winning_numbers_not_generated_for_next_draw_date() {
+        // given && when
+        boolean result = numberGeneratorFacade.areWinningNumbersGeneratedByDate();
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    private NumberGeneratorFacade createFacadeWithFixedClock(int year, int month, int day, int hour, int minute) {
+        Clock fixedClock = Clock.fixed(
+                LocalDateTime.of(year, month, day, hour, minute).toInstant(ZoneOffset.UTC),
+                ZoneId.of("UTC")
+        );
+        return new NumberGeneratorFacade(
+                new AdjustableRandomNumbersGenerator(),
+                new NumberGeneratorProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND),
+                new InMemoryWinningNumbersRepository(),
+                new IdGenerator(),
+                new DrawDateGenerator(fixedClock)
+        );
     }
 }
