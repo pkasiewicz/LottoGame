@@ -9,7 +9,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 class WinningNumbersValidator {
 
-    private final NumberGeneratorProperties properties;
+    private final WinningNumbersGeneratorProperties properties;
 
     public void validate(Set<Integer> numbers) {
         validateCount(numbers);

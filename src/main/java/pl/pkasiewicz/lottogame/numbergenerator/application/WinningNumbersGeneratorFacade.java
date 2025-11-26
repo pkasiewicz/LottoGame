@@ -10,20 +10,20 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
-public class NumberGeneratorFacade implements NumberGeneratorUseCase {
+public class WinningNumbersGeneratorFacade implements WinningNumbersGeneratorUseCase {
 
     private final RandomNumberGeneratorPort randomNumbersGenerator;
-    private final NumberGeneratorProperties properties;
+    private final WinningNumbersGeneratorProperties properties;
     private final WinningNumbersRepository repository;
     private final IdGenerable idGenerator;
     private final WinningNumbersValidator winningNumbersValidator;
     private final DrawDateGenerable drawDateGenerator;
 
-    public NumberGeneratorFacade(RandomNumberGeneratorPort randomNumbersGenerator,
-                                 NumberGeneratorProperties properties,
-                                 WinningNumbersRepository repository,
-                                 IdGenerable idGenerator,
-                                 DrawDateGenerable drawDateGenerator) {
+    public WinningNumbersGeneratorFacade(RandomNumberGeneratorPort randomNumbersGenerator,
+                                         WinningNumbersGeneratorProperties properties,
+                                         WinningNumbersRepository repository,
+                                         IdGenerable idGenerator,
+                                         DrawDateGenerable drawDateGenerator) {
         this.randomNumbersGenerator = randomNumbersGenerator;
         this.properties = properties;
         this.repository = repository;

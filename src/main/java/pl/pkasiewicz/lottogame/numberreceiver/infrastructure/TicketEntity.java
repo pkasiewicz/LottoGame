@@ -30,10 +30,10 @@ public class TicketEntity {
     private Set<Integer> numbers;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime drawDate;
 
     public Ticket toDomain() {
-        return new Ticket(new TicketId(id), numbers, date);
+        return new Ticket(new TicketId(id), numbers, drawDate);
     }
 
     public static TicketEntity fromDomain(Ticket ticket) {

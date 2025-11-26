@@ -6,5 +6,5 @@ import java.util.UUID;
 public interface TicketResultRepository {
 
     TicketResult save(TicketResult ticketResult);
-    Optional<TicketResult> findById(UUID id);
+    Optional<TicketResult> findByTicketId(UUID ticketId);
 }

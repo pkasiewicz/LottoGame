@@ -26,17 +26,21 @@ public class WinningNumbersEntity {
             name = "winning_numbers_values",
             joinColumns = @JoinColumn(name = "winning_numbers_id")
     )
-    @Column(name = "number", nullable = false)
+    @Column(name = "winning_numbers", nullable = false)
     private Set<Integer> winningNumbers;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime drawDate;
 
     public WinningNumbers toDomain() {
-        return new WinningNumbers(new WinningNumbersId(id), winningNumbers, date);
+        return new WinningNumbers(new WinningNumbersId(id), winningNumbers, drawDate);
     }
 
     public static WinningNumbersEntity fromDomain(WinningNumbers winningNumbers) {
-        return new WinningNumbersEntity(winningNumbers.getId().value(), winningNumbers.getWinningNumbers(), winningNumbers.getDate());
+        return new WinningNumbersEntity(
+                winningNumbers.getId().value(),
+                winningNumbers.getWinningNumbers(),
+                winningNumbers.getDrawDate()
+        );
     }
 }

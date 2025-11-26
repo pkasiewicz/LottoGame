@@ -14,6 +14,7 @@ import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFou
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,9 +28,9 @@ public class ResultCheckerFacade implements ResultCheckerUseCase {
     private final DrawDateGenerable drawDateGenerator;
 
     @Override
-    public List<TicketResult> checkResults() {
+    public List<TicketResult> generateResults() {
         LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
-        
+
         WinningNumbers winningNumbers = winningNumbersGeneratorFacade.retrieveWinningNumbersByDate(nextDrawDate);
         Set<Integer> wonNumbers = winningNumbers.getWinningNumbers();
 
@@ -42,8 +43,14 @@ public class ResultCheckerFacade implements ResultCheckerUseCase {
     }
 
     @Override
-    public TicketResult findById(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new TicketResultNotFoundException("Ticket result not found for id: " + id));
+    public TicketResult getResultForTicket(UUID ticketId) {
+        return repository.findByTicketId(ticketId)
+                .orElseThrow(() -> new TicketResultNotFoundException("Ticket result with TicketId: " + ticketId + " not found"));
+    }
+
+    @Override
+    public Optional<LocalDateTime> getDrawDateForTicket(UUID ticketId) {
+        return repository.findByTicketId(ticketId)
+                .map(TicketResult::getDrawDate);
     }
 }

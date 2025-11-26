@@ -16,7 +16,7 @@ class WinningNumbersValidatorTest {
     private static final int UPPER_BAND = 6;
 
     private final WinningNumbersValidator validator = new WinningNumbersValidator(
-            new NumberGeneratorProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND)
+            new WinningNumbersGeneratorProperties(EXPECTED_COUNT, LOWER_BAND, UPPER_BAND)
     );
 
     @Test

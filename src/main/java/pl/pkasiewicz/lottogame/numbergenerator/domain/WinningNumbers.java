@@ -10,5 +10,5 @@ public class WinningNumbers {
 
     private final WinningNumbersId id;
     private final Set<Integer> winningNumbers;
-    private final LocalDateTime date;
+    private final LocalDateTime drawDate;
 }
