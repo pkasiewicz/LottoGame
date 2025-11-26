@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-class TicketResultEntity {
+public class TicketResultEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,7 +34,7 @@ class TicketResultEntity {
 
     @ElementCollection
     @CollectionTable(
-            name = "user_hit_numbers",
+            name = "ticket_result_user_hit_numbers",
             joinColumns = @JoinColumn(name = "ticket_result_id")
     )
     @Column(name = "hit_numbers", nullable = false)
