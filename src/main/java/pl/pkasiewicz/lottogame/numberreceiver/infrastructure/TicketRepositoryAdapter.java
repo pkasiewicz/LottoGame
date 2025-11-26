@@ -16,7 +16,6 @@ public class TicketRepositoryAdapter implements TicketRepository {
 
     private final TicketJpaRepository repository;
 
-
     @Override
     public Ticket save(Ticket ticket) {
         TicketEntity saved = repository.save(TicketEntity.fromDomain(ticket));
