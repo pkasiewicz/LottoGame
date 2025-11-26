@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
 import pl.pkasiewicz.lottogame.infrastructure.DrawDateGenerator;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
@@ -12,14 +13,17 @@ import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketId;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
+import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFoundException;
 import pl.pkasiewicz.lottogame.resultchecker.testhelpers.InMemoryTicketResultRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,18 +32,20 @@ import static org.mockito.Mockito.when;
 class ResultCheckerFacadeTest {
 
     public static final LocalDateTime DRAW_DATE = LocalDateTime.of(2025, 11, 1, 12, 0);
+    public static final Set<Integer> WINNING_NUMBERS = Set.of(1, 2, 3, 4, 5, 6);
 
     private ResultCheckerFacade resultCheckerFacade;
     private InMemoryTicketResultRepository repository;
     private WinningNumbersGeneratorUseCase numberGenerator;
     private NumberReceiverUseCase numberReceiver;
+    private DrawDateGenerable drawDateGenerator;
 
     @BeforeEach
     void setUp() {
         repository = new InMemoryTicketResultRepository();
         numberGenerator = mock(WinningNumbersGeneratorUseCase.class);
         numberReceiver = mock(NumberReceiverUseCase.class);
-        DrawDateGenerator drawDateGenerator = mock(DrawDateGenerator.class);
+        drawDateGenerator = mock(DrawDateGenerable.class);
 
         resultCheckerFacade = new ResultCheckerFacade(
                 repository,
@@ -47,18 +53,18 @@ class ResultCheckerFacadeTest {
                 numberReceiver,
                 drawDateGenerator
         );
-
-        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
     }
 
     @Test
     public void should_return_winning_ticket_when_user_hit_all_six_numbers() {
         // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
         mockWinningNumbers();
         mockSingleTicket(Set.of(1, 2, 3, 4, 5, 6));
 
         // when
-        List<TicketResult> results = resultCheckerFacade.checkResults();
+        List<TicketResult> results = resultCheckerFacade.generateResults();
 
         // then
         assertThat(results).hasSize(1);
@@ -75,11 +81,13 @@ class ResultCheckerFacadeTest {
     @Test
     public void should_return_non_winning_ticket_when_user_hit_less_than_three_numbers() {
         // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
         mockWinningNumbers();
         mockSingleTicket(Set.of(7, 8, 9, 10, 11, 12));
 
         // when
-        List<TicketResult> results = resultCheckerFacade.checkResults();
+        List<TicketResult> results = resultCheckerFacade.generateResults();
 
         // then
         assertThat(results).hasSize(1);
@@ -96,11 +104,13 @@ class ResultCheckerFacadeTest {
     @Test
     public void should_return_winning_ticket_when_user_hit_three_numbers() {
         // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
         mockWinningNumbers();
         mockSingleTicket(Set.of(4, 5, 6, 7, 8, 9));
 
         // when
-        List<TicketResult> results = resultCheckerFacade.checkResults();
+        List<TicketResult> results = resultCheckerFacade.generateResults();
 
         // then
         assertThat(results).hasSize(1);
@@ -117,6 +127,8 @@ class ResultCheckerFacadeTest {
     @Test
     public void should_calculate_correct_hit_count_for_multiple_tickets() {
         // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
         mockWinningNumbers();
         mockTickets(List.of(
                         Set.of(1, 2, 3, 4, 5, 6),   // 6 trafień
@@ -126,7 +138,7 @@ class ResultCheckerFacadeTest {
         );
 
         // when
-        List<TicketResult> results = resultCheckerFacade.checkResults();
+        List<TicketResult> results = resultCheckerFacade.generateResults();
 
         // then
         assertThat(results).hasSize(3);
@@ -143,6 +155,8 @@ class ResultCheckerFacadeTest {
     @Test
     public void should_save_all_ticket_results_to_repository() {
         // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
         mockWinningNumbers();
         mockTickets(List.of(
                         Set.of(1, 2, 3, 4, 5, 6),   // 6 trafień
@@ -152,7 +166,7 @@ class ResultCheckerFacadeTest {
         );
 
         // when
-        resultCheckerFacade.checkResults();
+        resultCheckerFacade.generateResults();
 
         // then
         List<TicketResult> savedTicketResults = repository.findAll();
@@ -165,29 +179,125 @@ class ResultCheckerFacadeTest {
     @Test
     public void should_return_empty_list_when_no_tickets_for_draw_date() {
         // given
-        mockWinningNumbers();
-
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
         when(numberReceiver.retrieveAllTicketsByNextDrawDate(DRAW_DATE)).thenReturn(List.of());
 
+        mockWinningNumbers();
+
         // when
-        List<TicketResult> results = resultCheckerFacade.checkResults();
+        List<TicketResult> results = resultCheckerFacade.generateResults();
 
         // then
         assertThat(results).isEmpty();
+    }
+
+    @Test
+    public void should_retrieve_ticket_result_from_db() {
+        // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
+        mockWinningNumbers();
+        mockSingleTicket(Set.of(1, 2, 3, 4, 5, 6));
+
+        List<TicketResult> savedTicketResult = resultCheckerFacade.generateResults();
+        UUID ticketId = savedTicketResult.get(0).getTicketId();
+
+        // when
+        TicketResult result = resultCheckerFacade.getResultForTicket(ticketId);
+
+        // then
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.isWinner()).isTrue(),
+                () -> assertThat(result.getDrawDate()).isEqualTo(DRAW_DATE),
+                () -> assertThat(result.getHitCount()).isEqualTo(6),
+                () -> assertThat(result.getHitNumbers()).containsExactlyInAnyOrder(1, 2, 3, 4, 5, 6)
+        );
+    }
+
+    @Test
+    public void should_throw_exception_when_ticket_result_not_found() {
+        // given
+        UUID randomTicketId = UUID.randomUUID();
+
+        // when && then
+        assertThatThrownBy(() -> resultCheckerFacade.getResultForTicket(randomTicketId))
+                .isInstanceOf(TicketResultNotFoundException.class)
+                .hasMessage("Ticket result with TicketId: " + randomTicketId + " not found");
+    }
+
+    @Test
+    public void should_return_correct_draw_date_for_existing_ticket() {
+        // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
+        mockWinningNumbers();
+        mockSingleTicket(Set.of(1, 2, 3, 4, 5, 6));
+
+        List<TicketResult> savedTicketResult = resultCheckerFacade.generateResults();
+        UUID ticketId = savedTicketResult.get(0).getTicketId();
+
+        // when
+        Optional<LocalDateTime> drawDateForTicket = resultCheckerFacade.getDrawDateForTicket(ticketId);
+
+        // then
+        assertAll(
+                () -> assertThat(drawDateForTicket).isPresent(),
+                () -> assertThat(drawDateForTicket.get()).isEqualTo(DRAW_DATE)
+        );
+    }
+
+    @Test
+    public void should_return_empty_optional_when_ticket_with_draw_date_does_not_exist() {
+        // given
+        UUID nonExistentTicketId = UUID.randomUUID();
+
+        // when
+        Optional<LocalDateTime> drawDateForTicket = resultCheckerFacade.getDrawDateForTicket(nonExistentTicketId);
+
+        // then
+        assertThat(drawDateForTicket).isEmpty();
+    }
+
+    @Test
+    public void should_return_correct_draw_date_when_multiple_tickets_exist() {
+        // given
+        when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
+
+        mockWinningNumbers();
+        mockTickets(List.of(
+                        Set.of(1, 2, 3, 4, 5, 6),
+                        Set.of(4, 5, 6, 7, 8, 9),
+                        Set.of(7, 8, 9, 10, 11, 12)
+                )
+        );
+
+        List<TicketResult> savedTicketResult = resultCheckerFacade.generateResults();
+        UUID ticketId = savedTicketResult.get(0).getTicketId();
+
+        // when
+        Optional<LocalDateTime> drawDateForTicket = resultCheckerFacade.getDrawDateForTicket(ticketId);
+
+        // then
+        assertAll(
+                () -> assertThat(drawDateForTicket).isPresent(),
+                () -> assertThat(drawDateForTicket.get()).isEqualTo(DRAW_DATE),
+                () -> assertThat(savedTicketResult.get(1).getTicketId()).isNotEqualTo(ticketId)
+        );
     }
 
     private void mockWinningNumbers() {
         when(numberGenerator.retrieveWinningNumbersByDate(DRAW_DATE))
                 .thenReturn(new WinningNumbers(
                         new WinningNumbersId(UUID.fromString("00000000-0000-0000-0000-000000000001")),
-                        Set.of(1, 2, 3, 4, 5, 6),
+                        WINNING_NUMBERS,
                         DRAW_DATE)
                 );
     }
 
     private void mockSingleTicket(Set<Integer> numbers) {
         Ticket ticket = new Ticket(
-                new TicketId(UUID.fromString("00000000-0000-0000-0000-000000000001")),
+                new TicketId(UUID.randomUUID()),
                 numbers,
                 DRAW_DATE
         );

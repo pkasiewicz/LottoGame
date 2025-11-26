@@ -17,8 +17,11 @@ public class InMemoryTicketResultRepository implements TicketResultRepository {
     }
 
     @Override
-    public Optional<TicketResult> findById(UUID id) {
-        return Optional.ofNullable(db.get(id));
+    public Optional<TicketResult> findByTicketId(UUID ticketId) {
+        return db.values()
+                .stream()
+                .filter(ticketResult -> ticketResult.getTicketId().equals(ticketId))
+                .findAny();
     }
 
     public List<TicketResult> findAll() {
