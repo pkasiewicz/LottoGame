@@ -23,7 +23,7 @@ public class InMemoryWinningNumbersRepository implements WinningNumbersRepositor
     public Optional<WinningNumbers> findByDate(LocalDateTime date) {
         return db.values()
                 .stream()
-                .filter(ticket -> ticket.getDate().isEqual(date))
+                .filter(ticket -> ticket.getDrawDate().isEqual(date))
                 .findFirst();
     }
 
