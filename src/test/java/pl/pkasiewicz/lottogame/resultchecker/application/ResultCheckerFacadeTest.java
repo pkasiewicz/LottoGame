@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
-import pl.pkasiewicz.lottogame.infrastructure.DrawDateGenerator;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersId;
