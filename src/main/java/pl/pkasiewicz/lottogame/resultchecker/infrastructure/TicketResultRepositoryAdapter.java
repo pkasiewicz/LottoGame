@@ -21,8 +21,8 @@ public class TicketResultRepositoryAdapter implements TicketResultRepository {
     }
 
     @Override
-    public Optional<TicketResult> findById(UUID id) {
-        return repository.findById(id)
+    public Optional<TicketResult> findByTicketId(UUID ticketId) {
+        return repository.findByTicketId(ticketId)
                 .map(TicketResultEntity::toDomain);
     }
 }
