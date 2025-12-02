@@ -1,5 +1,6 @@
 package pl.pkasiewicz.lottogame.numbergenerator.application;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
 import pl.pkasiewicz.lottogame.domain.IdGenerable;
@@ -19,7 +20,7 @@ public class WinningNumbersGeneratorFacade implements WinningNumbersGeneratorUse
     private final WinningNumbersValidator winningNumbersValidator;
     private final DrawDateGenerable drawDateGenerator;
 
-    public WinningNumbersGeneratorFacade(RandomNumberGeneratorPort randomNumbersGenerator,
+    public WinningNumbersGeneratorFacade(@Qualifier("randomNumberApiAdapter") RandomNumberGeneratorPort randomNumbersGenerator,
                                          WinningNumbersGeneratorProperties properties,
                                          WinningNumbersRepository repository,
                                          IdGenerable idGenerator,

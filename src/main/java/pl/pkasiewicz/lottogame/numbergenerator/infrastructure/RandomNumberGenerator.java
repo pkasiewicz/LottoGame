@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-@Component
+@Component("randomNumberGenerator")
 public class RandomNumberGenerator implements RandomNumberGeneratorPort {
 
     private final Random random = new Random();
