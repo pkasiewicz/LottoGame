@@ -6,9 +6,9 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RandomNumberGeneratorTest {
+class RandomNumbersGeneratorTest {
 
-    private final RandomNumberGenerator generator = new RandomNumberGenerator();
+    private final RandomNumbersGenerator generator = new RandomNumbersGenerator();
 
     @Test
     public void should_generate_six_unique_numbers() {

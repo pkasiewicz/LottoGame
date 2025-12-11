@@ -13,14 +13,14 @@ import java.util.Set;
 @Service
 public class WinningNumbersGeneratorFacade implements WinningNumbersGeneratorUseCase {
 
-    private final RandomNumberGeneratorPort randomNumbersGenerator;
+    private final RandomNumbersGeneratorPort randomNumbersGenerator;
     private final WinningNumbersGeneratorProperties properties;
     private final WinningNumbersRepository repository;
     private final IdGenerable idGenerator;
     private final WinningNumbersValidator winningNumbersValidator;
     private final DrawDateGenerable drawDateGenerator;
 
-    public WinningNumbersGeneratorFacade(@Qualifier("randomNumberApiAdapter") RandomNumberGeneratorPort randomNumbersGenerator,
+    public WinningNumbersGeneratorFacade(@Qualifier("randomNumbersApiAdapter") RandomNumbersGeneratorPort randomNumbersGenerator,
                                          WinningNumbersGeneratorProperties properties,
                                          WinningNumbersRepository repository,
                                          IdGenerable idGenerator,

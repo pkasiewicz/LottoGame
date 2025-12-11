@@ -22,12 +22,12 @@ public class WinningNumbersRepositoryAdapter implements WinningNumbersRepository
 
     @Override
     public Optional<WinningNumbers> findByDate(LocalDateTime date) {
-        return repository.findByDate(date)
+        return repository.findByDrawDate(date)
                 .map(WinningNumbersEntity::toDomain);
     }
 
     @Override
     public boolean existsByDate(LocalDateTime date) {
-        return repository.existsByDate(date);
+        return repository.existsByDrawDate(date);
     }
 }
