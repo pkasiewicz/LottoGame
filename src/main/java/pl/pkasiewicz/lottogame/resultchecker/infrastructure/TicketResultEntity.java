@@ -1,9 +1,9 @@
 package pl.pkasiewicz.lottogame.resultchecker.infrastructure;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultId;
 
@@ -14,30 +14,22 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class TicketResultEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
     private UUID ticketId;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "ticket_result_user_numbers",
-            joinColumns = @JoinColumn(name = "ticket_result_id")
-    )
-    @Column(name = "user_numbers", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Set<Integer> userNumbers;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "ticket_result_user_hit_numbers",
-            joinColumns = @JoinColumn(name = "ticket_result_id")
-    )
-    @Column(name = "hit_numbers", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Set<Integer> hitNumbers;
 
     @Column(nullable = false)

@@ -1,9 +1,9 @@
 package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersId;
 
@@ -14,19 +14,15 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class WinningNumbersEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "winning_numbers_values",
-            joinColumns = @JoinColumn(name = "winning_numbers_id")
-    )
-    @Column(name = "winning_numbers", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Set<Integer> winningNumbers;
 
     @Column(nullable = false)
