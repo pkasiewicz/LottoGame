@@ -13,7 +13,7 @@ public class ResultCheckerScheduler {
 
     private final ResultCheckerUseCase resultChecker;
 
-    @Scheduled(cron = "0 5 12 ? * SAT")
+    @Scheduled(cron = "${lotto.result-checker.scheduler.cron}")
     public void checkResults() {
         log.info("Starting scheduled results checking");
         resultChecker.generateResults();

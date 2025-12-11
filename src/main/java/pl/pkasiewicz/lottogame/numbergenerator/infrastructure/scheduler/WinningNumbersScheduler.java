@@ -13,7 +13,7 @@ public class WinningNumbersScheduler {
 
     private final WinningNumbersGeneratorUseCase winningNumbersGenerator;
 
-    @Scheduled(cron = "0 0 12 ? * SAT")
+    @Scheduled(cron = "${lotto.number-generator.scheduler.cron}")
     public void generateWinningNumbers(){
         log.info("Starting scheduled winning numbers generation");
         winningNumbersGenerator.generateWinningNumbers();
