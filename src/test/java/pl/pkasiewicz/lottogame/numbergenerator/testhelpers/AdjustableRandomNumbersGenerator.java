@@ -1,10 +1,10 @@
 package pl.pkasiewicz.lottogame.numbergenerator.testhelpers;
 
-import pl.pkasiewicz.lottogame.numbergenerator.domain.RandomNumberGeneratorPort;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.RandomNumbersGeneratorPort;
 
 import java.util.Set;
 
-public class AdjustableRandomNumbersGenerator implements RandomNumberGeneratorPort {
+public class AdjustableRandomNumbersGenerator implements RandomNumbersGeneratorPort {
 
     private final Set<Integer> generatedNumbers;
 

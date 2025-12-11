@@ -1,14 +1,14 @@
 package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
 
 import org.springframework.stereotype.Component;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.RandomNumberGeneratorPort;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.RandomNumbersGeneratorPort;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 @Component("randomNumberGenerator")
-public class RandomNumberGenerator implements RandomNumberGeneratorPort {
+public class RandomNumbersGenerator implements RandomNumbersGeneratorPort {
 
     private final Random random = new Random();
 

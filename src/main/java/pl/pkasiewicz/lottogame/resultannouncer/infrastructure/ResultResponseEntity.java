@@ -1,9 +1,9 @@
 package pl.pkasiewicz.lottogame.resultannouncer.infrastructure;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponseId;
 
@@ -14,38 +14,26 @@ import java.util.UUID;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class ResultResponseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
     private UUID ticketId;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "result_response_user_numbers",
-            joinColumns = @JoinColumn(name = "result_response_id")
-    )
-    @Column(name = "user_numbers", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Set<Integer> userNumbers;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "result_response_won_numbers",
-            joinColumns = @JoinColumn(name = "result_response_id")
-    )
-    @Column(name = "won_numbers", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Set<Integer> wonNumbers;
 
-    @ElementCollection
-    @CollectionTable(
-            name = "result_response_user_hit_numbers",
-            joinColumns = @JoinColumn(name = "result_response_id")
-    )
-    @Column(name = "hit_numbers", nullable = false)
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Set<Integer> hitNumbers;
 
     @Column(nullable = false)

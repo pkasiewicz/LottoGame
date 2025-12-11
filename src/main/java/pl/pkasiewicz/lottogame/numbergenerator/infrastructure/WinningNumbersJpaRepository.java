@@ -10,6 +10,6 @@ import java.util.UUID;
 @Repository
 public interface WinningNumbersJpaRepository extends JpaRepository<WinningNumbersEntity, UUID> {
 
-    Optional<WinningNumbersEntity> findByDate(LocalDateTime date);
-    boolean existsByDate(LocalDateTime date);
+    Optional<WinningNumbersEntity> findByDrawDate(LocalDateTime date);
+    boolean existsByDrawDate(LocalDateTime date);
 }
