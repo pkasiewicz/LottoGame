@@ -7,14 +7,13 @@ import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
+import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
 import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -46,11 +45,5 @@ public class ResultCheckerFacade implements ResultCheckerUseCase {
     public TicketResult getResultForTicket(UUID ticketId) {
         return repository.findByTicketId(ticketId)
                 .orElseThrow(() -> new TicketResultNotFoundException("Ticket result with TicketId: " + ticketId + " not found"));
-    }
-
-    @Override
-    public Optional<LocalDateTime> getDrawDateForTicket(UUID ticketId) {
-        return repository.findByTicketId(ticketId)
-                .map(TicketResult::getDrawDate);
     }
 }

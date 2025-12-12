@@ -5,13 +5,12 @@ import org.springframework.stereotype.Service;
 import pl.pkasiewicz.lottogame.domain.IdGenerable;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.*;
 import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFoundException;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -21,10 +20,10 @@ import java.util.UUID;
 public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
 
     private final ResultResponseRepository repository;
+    private final NumberReceiverUseCase numberReceiverFacade;
     private final ResultCheckerUseCase resultCheckerFacade;
     private final WinningNumbersGeneratorUseCase numberGenerator;
     private final IdGenerable idGenerator;
-    private final Clock clock;
 
     @Override
     public ResultAnnouncement checkResult(UUID ticketId) {
@@ -36,17 +35,18 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                     .build();
         }
 
-        TicketResult ticketResult;
-        try {
-            ticketResult = resultCheckerFacade.getResultForTicket(ticketId);
-        } catch (TicketResultNotFoundException e) {
+        boolean ticketExists = numberReceiverFacade.ticketExists(ticketId);
+        if (!ticketExists) {
             return ResultAnnouncement.builder()
                     .status(ResultStatus.TICKET_NOT_FOUND)
                     .result(null)
                     .build();
         }
 
-        if (!hasDrawOccurred(ticketId)) {
+        TicketResult ticketResult;
+        try {
+            ticketResult = resultCheckerFacade.getResultForTicket(ticketId);
+        } catch (TicketResultNotFoundException e) {
             return ResultAnnouncement.builder()
                     .status(ResultStatus.WAITING_FOR_DRAW)
                     .result(null)
@@ -60,15 +60,6 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                 .status(ticketResult.isWinner() ? ResultStatus.WIN_MESSAGE : ResultStatus.LOSE_MESSAGE)
                 .result(saved)
                 .build();
-    }
-
-    private boolean hasDrawOccurred(UUID ticketId) {
-        return resultCheckerFacade.getDrawDateForTicket(ticketId)
-                .map(drawDate -> {
-                    LocalDateTime drawTime = drawDate.plusMinutes(15);
-                    return LocalDateTime.now(clock).isAfter(drawTime);
-                })
-                .orElse(false);
     }
 
     private ResultResponse buildAndSaveResult(TicketResult ticketResult, Set<Integer> winningNumbers) {

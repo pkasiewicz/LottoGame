@@ -11,6 +11,7 @@ import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class NumberReceiverFacade implements NumberReceiverUseCase {
@@ -45,5 +46,10 @@ public class NumberReceiverFacade implements NumberReceiverUseCase {
     @Override
     public List<Ticket> retrieveAllTicketsByNextDrawDate(LocalDateTime nextDrawDate) {
         return repository.findAllTicketsByDrawDate(nextDrawDate);
+    }
+
+    @Override
+    public boolean ticketExists(UUID ticketId) {
+        return repository.findById(ticketId).isPresent();
     }
 }
