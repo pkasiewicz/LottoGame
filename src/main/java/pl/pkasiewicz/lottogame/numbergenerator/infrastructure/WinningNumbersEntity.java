@@ -1,7 +1,12 @@
 package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
@@ -22,7 +27,7 @@ public class WinningNumbersEntity {
     private UUID id;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", nullable = false)
     private Set<Integer> winningNumbers;
 
     @Column(nullable = false)
