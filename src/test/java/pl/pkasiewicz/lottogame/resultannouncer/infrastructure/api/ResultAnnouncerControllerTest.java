@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,7 +44,7 @@ class ResultAnnouncerControllerTest {
                 .result(resultResponse)
                 .build();
 
-        when(resultAnnouncerFacade.checkResult(any(UUID.class))).thenReturn(resultAnnouncement);
+        when(resultAnnouncerFacade.checkResult(ticketId)).thenReturn(resultAnnouncement);
 
         // when && then
         mockMvc.perform(get("/api/results/{ticketId}", ticketId))
@@ -75,7 +74,7 @@ class ResultAnnouncerControllerTest {
                 .result(resultResponse)
                 .build();
 
-        when(resultAnnouncerFacade.checkResult(any(UUID.class))).thenReturn(resultAnnouncement);
+        when(resultAnnouncerFacade.checkResult(ticketId)).thenReturn(resultAnnouncement);
 
         // when && then
         mockMvc.perform(get("/api/results/{ticketId}", ticketId))

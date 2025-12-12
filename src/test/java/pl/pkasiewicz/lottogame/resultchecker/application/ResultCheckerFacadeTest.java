@@ -17,7 +17,6 @@ import pl.pkasiewicz.lottogame.resultchecker.testhelpers.InMemoryTicketResultRep
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -237,25 +236,11 @@ class ResultCheckerFacadeTest {
         UUID ticketId = savedTicketResult.get(0).getTicketId();
 
         // when
-        Optional<LocalDateTime> drawDateForTicket = resultCheckerFacade.getDrawDateForTicket(ticketId);
+        TicketResult resultForTicket = resultCheckerFacade.getResultForTicket(ticketId);
+        LocalDateTime drawDateForTicket = resultForTicket.getDrawDate();
 
         // then
-        assertAll(
-                () -> assertThat(drawDateForTicket).isPresent(),
-                () -> assertThat(drawDateForTicket.get()).isEqualTo(DRAW_DATE)
-        );
-    }
-
-    @Test
-    public void should_return_empty_optional_when_ticket_with_draw_date_does_not_exist() {
-        // given
-        UUID nonExistentTicketId = UUID.randomUUID();
-
-        // when
-        Optional<LocalDateTime> drawDateForTicket = resultCheckerFacade.getDrawDateForTicket(nonExistentTicketId);
-
-        // then
-        assertThat(drawDateForTicket).isEmpty();
+        assertThat(drawDateForTicket).isEqualTo(DRAW_DATE);
     }
 
     @Test
@@ -275,12 +260,12 @@ class ResultCheckerFacadeTest {
         UUID ticketId = savedTicketResult.get(0).getTicketId();
 
         // when
-        Optional<LocalDateTime> drawDateForTicket = resultCheckerFacade.getDrawDateForTicket(ticketId);
+        TicketResult resultForTicket = resultCheckerFacade.getResultForTicket(ticketId);
+        LocalDateTime drawDateForTicket = resultForTicket.getDrawDate();
 
         // then
         assertAll(
-                () -> assertThat(drawDateForTicket).isPresent(),
-                () -> assertThat(drawDateForTicket.get()).isEqualTo(DRAW_DATE),
+                () -> assertThat(drawDateForTicket).isEqualTo(DRAW_DATE),
                 () -> assertThat(savedTicketResult.get(1).getTicketId()).isNotEqualTo(ticketId)
         );
     }
