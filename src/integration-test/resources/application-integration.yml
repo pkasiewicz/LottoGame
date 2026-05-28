@@ -10,3 +10,11 @@ spring:
   task:
     scheduling:
       enabled: true
+
+lotto:
+  number-generator:
+    scheduler:
+      cron: "*/5 * * * * *"
+  result-checker:
+    scheduler:
+      cron: "*/7 * * * * *"
