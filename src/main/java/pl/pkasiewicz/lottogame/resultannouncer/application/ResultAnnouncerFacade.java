@@ -2,13 +2,13 @@ package pl.pkasiewicz.lottogame.resultannouncer.application;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.pkasiewicz.lottogame.domain.IdGenerable;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
+import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.*;
-import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultAnnouncerUseCase;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultResponseRepository;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.TicketExistenceChecker;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.TicketResultProvider;
 
 import java.util.Optional;
 import java.util.Set;
@@ -19,9 +19,9 @@ import java.util.UUID;
 public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
 
     private final ResultResponseRepository repository;
-    private final NumberReceiverUseCase numberReceiverFacade;
-    private final ResultCheckerUseCase resultCheckerFacade;
-    private final WinningNumbersGeneratorUseCase numberGenerator;
+    private final TicketExistenceChecker ticketExistenceChecker;
+    private final TicketResultProvider ticketResultProvider;
+    private final WinningNumbersProvider winningNumbersProvider;
     private final IdGenerable idGenerator;
 
     @Override
@@ -34,14 +34,14 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                     .build();
         }
 
-        if (!numberReceiverFacade.ticketExists(ticketId)) {
+        if (!ticketExistenceChecker.ticketExistsById(ticketId)) {
             return ResultAnnouncement.builder()
                     .status(ResultStatus.TICKET_NOT_FOUND)
                     .result(null)
                     .build();
         }
 
-        Optional<TicketResult> ticketResult = resultCheckerFacade.getResultForTicket(ticketId);
+        Optional<TicketResultData> ticketResult = ticketResultProvider.getResultForTicket(ticketId);
         if (ticketResult.isEmpty()) {
             return ResultAnnouncement.builder()
                     .status(ResultStatus.WAITING_FOR_DRAW)
@@ -49,8 +49,8 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                     .build();
         }
 
-        WinningNumbers winningNumbers = numberGenerator.retrieveWinningNumbersByDate(ticketResult.get().getDrawDate());
-        ResultResponse saved = buildAndSaveResult(ticketResult.get(), winningNumbers.getWinningNumbers());
+        Set<Integer> winningNumbers = winningNumbersProvider.getWinningNumbersByDate(ticketResult.get().drawDate());
+        ResultResponse saved = buildAndSaveResult(ticketResult.get(), winningNumbers);
 
         return ResultAnnouncement.builder()
                 .status(saved.isWinner() ? ResultStatus.WIN_MESSAGE : ResultStatus.LOSE_MESSAGE)
@@ -58,16 +58,18 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                 .build();
     }
 
-    private ResultResponse buildAndSaveResult(TicketResult ticketResult, Set<Integer> winningNumbers) {
-        return repository.save(new ResultResponse(
-                new ResultResponseId(idGenerator.generateId()),
-                ticketResult.getTicketId(),
-                ticketResult.getUserNumbers(),
-                winningNumbers,
-                ticketResult.getHitNumbers(),
-                ticketResult.getHitCount(),
-                ticketResult.getDrawDate(),
-                ticketResult.isWinner()
-        ));
+    private ResultResponse buildAndSaveResult(TicketResultData ticketResult, Set<Integer> winningNumbers) {
+        return repository.save(
+                new ResultResponse(
+                        new ResultResponseId(idGenerator.generateId()),
+                        ticketResult.ticketId(),
+                        ticketResult.userNumbers(),
+                        winningNumbers,
+                        ticketResult.hitNumbers(),
+                        ticketResult.hitCount(),
+                        ticketResult.drawDate(),
+                        ticketResult.isWinner()
+                )
+        );
     }
 }
