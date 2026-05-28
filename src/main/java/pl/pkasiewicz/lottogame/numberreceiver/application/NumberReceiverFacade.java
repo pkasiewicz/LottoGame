@@ -13,6 +13,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Facade for receiving and storing lottery ticket submissions.
+ * Validates user-provided numbers and persists tickets for the next draw date.
+ */
 @Service
 public class NumberReceiverFacade implements NumberReceiverUseCase {
 

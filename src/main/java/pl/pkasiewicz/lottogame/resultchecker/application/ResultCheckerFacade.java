@@ -17,6 +17,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Facade for checking lottery results.
+ * Generates ticket results based on winning numbers and provides retrieval of results for specific tickets.
+ */
 @Service
 @AllArgsConstructor
 public class ResultCheckerFacade implements ResultCheckerUseCase {

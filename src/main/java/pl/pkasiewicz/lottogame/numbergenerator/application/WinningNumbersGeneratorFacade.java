@@ -13,6 +13,10 @@ import pl.pkasiewicz.lottogame.numbergenerator.domain.port.WinningNumbersReposit
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Facade for generating and retrieving winning numbers.
+ * Fetches random numbers from an external source, validates them, and persists them for the draw date.
+ */
 @Service
 public class WinningNumbersGeneratorFacade implements WinningNumbersGeneratorUseCase {
 

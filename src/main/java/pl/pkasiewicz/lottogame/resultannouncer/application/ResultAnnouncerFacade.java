@@ -14,6 +14,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Facade for announcing lottery results.
+ * Retrieves ticket results and winning numbers, builds result announcements, and caches them for future requests.
+ */
 @Service
 @AllArgsConstructor
 public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
