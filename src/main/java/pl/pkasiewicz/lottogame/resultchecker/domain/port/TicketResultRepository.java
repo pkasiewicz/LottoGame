@@ -1,4 +1,6 @@
-package pl.pkasiewicz.lottogame.resultchecker.domain;
+package pl.pkasiewicz.lottogame.resultchecker.domain.port;
+
+import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 
 import java.util.List;
 import java.util.Optional;

@@ -3,16 +3,13 @@ package pl.pkasiewicz.lottogame.resultchecker.application;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
-import pl.pkasiewicz.lottogame.domain.IdGenerable;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
-import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultId;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
+import pl.pkasiewicz.lottogame.domain.port.DrawDateGenerable;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
+import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
+import pl.pkasiewicz.lottogame.resultchecker.domain.*;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.ResultCheckerUseCase;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.TicketProvider;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.TicketResultRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,8 +22,8 @@ import java.util.UUID;
 public class ResultCheckerFacade implements ResultCheckerUseCase {
 
     private final TicketResultRepository repository;
-    private final WinningNumbersGeneratorUseCase winningNumbersGeneratorFacade;
-    private final NumberReceiverUseCase numberReceiverFacade;
+    private final WinningNumbersProvider winningNumbersProvider;
+    private final TicketProvider ticketProvider;
     private final DrawDateGenerable drawDateGenerator;
     private final IdGenerable idGenerator;
 
@@ -35,18 +32,17 @@ public class ResultCheckerFacade implements ResultCheckerUseCase {
     public List<TicketResult> generateResults() {
         LocalDateTime nextDrawDate = drawDateGenerator.getNextDrawDate();
 
-        if (!winningNumbersGeneratorFacade.areWinningNumbersGeneratedByDate()) {
+        if (!winningNumbersProvider.areWinningNumbersGeneratedByDate()) {
             return List.of();
         }
 
-        WinningNumbers winningNumbers = winningNumbersGeneratorFacade.retrieveWinningNumbersByDate(nextDrawDate);
-        Set<Integer> wonNumbers = winningNumbers.getWinningNumbers();
+        Set<Integer> wonNumbers = winningNumbersProvider.getWinningNumbersByDate(nextDrawDate);
 
-        List<Ticket> tickets = numberReceiverFacade.retrieveAllTicketsByNextDrawDate(nextDrawDate);
+        List<TicketData> tickets = ticketProvider.getTicketsByDrawDate(nextDrawDate);
 
         return tickets.stream()
-                .filter(ticket -> repository.findByTicketId(ticket.getId().value()).isEmpty())
-                .map(ticket -> TicketResult.fromTicket(ticket,
+                .filter(ticket -> repository.findByTicketId(ticket.ticketId()).isEmpty())
+                .map(ticket -> TicketResult.fromTicketData(ticket,
                         wonNumbers,
                         new TicketResultId(idGenerator.generateId())))
                 .map(repository::save)

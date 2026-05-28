@@ -1,7 +1,6 @@
 package pl.pkasiewicz.lottogame.resultchecker.domain;
 
 import lombok.Data;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -19,18 +18,18 @@ public class TicketResult {
     private final LocalDateTime drawDate;
     private final boolean isWinner;
 
-    public static TicketResult fromTicket(Ticket ticket, Set<Integer> winningNumbers, TicketResultId ticketResultId) {
-        Set<Integer> hitNumbers = ticket.getNumbers().stream()
+    public static TicketResult fromTicketData(TicketData ticket, Set<Integer> winningNumbers, TicketResultId ticketResultId) {
+        Set<Integer> hitNumbers = ticket.numbers().stream()
                 .filter(winningNumbers::contains)
                 .collect(Collectors.toSet());
 
         return new TicketResult(
                 ticketResultId,
-                ticket.getId().value(),
-                ticket.getNumbers(),
+                ticket.ticketId(),
+                ticket.numbers(),
                 hitNumbers,
                 hitNumbers.size(),
-                ticket.getDrawDate(),
+                ticket.drawDate(),
                 hitNumbers.size() >= 3
         );
     }
