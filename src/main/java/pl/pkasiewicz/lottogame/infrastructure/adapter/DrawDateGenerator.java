@@ -1,7 +1,7 @@
-package pl.pkasiewicz.lottogame.infrastructure;
+package pl.pkasiewicz.lottogame.infrastructure.adapter;
 
 import org.springframework.stereotype.Component;
-import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
+import pl.pkasiewicz.lottogame.domain.port.DrawDateGenerable;
 
 import java.time.Clock;
 import java.time.DayOfWeek;

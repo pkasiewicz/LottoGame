@@ -1,16 +1,18 @@
-package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
+package pl.pkasiewicz.lottogame.numbergenerator.infrastructure.adapter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersRepository;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.WinningNumbersRepository;
+import pl.pkasiewicz.lottogame.numbergenerator.infrastructure.WinningNumbersEntity;
+import pl.pkasiewicz.lottogame.numbergenerator.infrastructure.WinningNumbersJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class WinningNumbersRepositoryAdapter implements WinningNumbersRepository {
+class WinningNumbersRepositoryAdapter implements WinningNumbersRepository {
 
     private final WinningNumbersJpaRepository repository;
 

@@ -1,9 +1,11 @@
-package pl.pkasiewicz.lottogame.resultchecker.infrastructure;
+package pl.pkasiewicz.lottogame.resultchecker.infrastructure.adapter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.TicketResultRepository;
+import pl.pkasiewicz.lottogame.resultchecker.infrastructure.TicketResultEntity;
+import pl.pkasiewicz.lottogame.resultchecker.infrastructure.TicketResultJpaRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +13,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class TicketResultRepositoryAdapter implements TicketResultRepository {
+class TicketResultRepositoryAdapter implements TicketResultRepository {
 
     private final TicketResultJpaRepository repository;
 

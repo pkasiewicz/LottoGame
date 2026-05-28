@@ -1,4 +1,4 @@
-package pl.pkasiewicz.lottogame.numbergenerator.domain;
+package pl.pkasiewicz.lottogame.numbergenerator.domain.port;
 
 import java.util.Set;
 

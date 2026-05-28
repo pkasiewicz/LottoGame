@@ -1,9 +1,11 @@
-package pl.pkasiewicz.lottogame.numberreceiver.infrastructure;
+package pl.pkasiewicz.lottogame.numberreceiver.infrastructure.adapter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.port.TicketRepository;
+import pl.pkasiewicz.lottogame.numberreceiver.infrastructure.TicketEntity;
+import pl.pkasiewicz.lottogame.numberreceiver.infrastructure.TicketJpaRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class TicketRepositoryAdapter implements TicketRepository {
+class TicketRepositoryAdapter implements TicketRepository {
 
     private final TicketJpaRepository repository;
 

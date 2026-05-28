@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.ResultCheckerUseCase;
 
 @Slf4j
 @Component

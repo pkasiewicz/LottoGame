@@ -1,4 +1,4 @@
-package pl.pkasiewicz.lottogame.domain;
+package pl.pkasiewicz.lottogame.domain.port;
 
 import java.time.LocalDateTime;
 

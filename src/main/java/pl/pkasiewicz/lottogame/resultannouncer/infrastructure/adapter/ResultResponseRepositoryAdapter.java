@@ -1,16 +1,18 @@
-package pl.pkasiewicz.lottogame.resultannouncer.infrastructure;
+package pl.pkasiewicz.lottogame.resultannouncer.infrastructure.adapter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
-import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponseRepository;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultResponseRepository;
+import pl.pkasiewicz.lottogame.resultannouncer.infrastructure.ResultResponseEntity;
+import pl.pkasiewicz.lottogame.resultannouncer.infrastructure.ResultResponseJpaRepository;
 
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ResultResponseRepositoryAdapter implements ResultResponseRepository {
+class ResultResponseRepositoryAdapter implements ResultResponseRepository {
 
     private final ResultResponseJpaRepository repository;
 

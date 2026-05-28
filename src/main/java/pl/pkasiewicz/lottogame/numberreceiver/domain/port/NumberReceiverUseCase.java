@@ -1,4 +1,6 @@
-package pl.pkasiewicz.lottogame.numberreceiver.domain;
+package pl.pkasiewicz.lottogame.numberreceiver.domain.port;
+
+import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,12 +1,12 @@
 package pl.pkasiewicz.lottogame.numberreceiver.application;
 
 import org.springframework.stereotype.Service;
-import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
-import pl.pkasiewicz.lottogame.domain.IdGenerable;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
+import pl.pkasiewicz.lottogame.domain.port.DrawDateGenerable;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.port.NumberReceiverUseCase;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketId;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.port.TicketRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
