@@ -34,4 +34,16 @@ public class TicketRepositoryAdapter implements TicketRepository {
         return repository.findById(id)
                 .map(TicketEntity::toDomain);
     }
+
+    @Override
+    public List<Ticket> findAll() {
+        return repository.findAll().stream()
+                .map(TicketEntity::toDomain)
+                .toList();
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }

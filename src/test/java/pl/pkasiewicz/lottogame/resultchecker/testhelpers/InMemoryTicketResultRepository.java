@@ -1,5 +1,6 @@
 package pl.pkasiewicz.lottogame.resultchecker.testhelpers;
 
+import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
 
@@ -24,7 +25,13 @@ public class InMemoryTicketResultRepository implements TicketResultRepository {
                 .findAny();
     }
 
+    @Override
     public List<TicketResult> findAll() {
-        return new ArrayList<>(db.values());
+        return db.values().stream().toList();
+    }
+
+    @Override
+    public void deleteAll() {
+        db.clear();
     }
 }

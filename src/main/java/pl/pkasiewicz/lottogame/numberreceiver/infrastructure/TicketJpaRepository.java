@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface TicketJpaRepository extends JpaRepository<TicketEntity, UUID> {
 
     List<TicketEntity> findAllTicketsByDrawDate(LocalDateTime drawDate);
+    void deleteAll();
 }
