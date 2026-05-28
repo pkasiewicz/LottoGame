@@ -9,7 +9,6 @@ import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.*;
 import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
-import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFoundException;
 
 import java.util.Optional;
 import java.util.Set;
@@ -35,29 +34,26 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                     .build();
         }
 
-        boolean ticketExists = numberReceiverFacade.ticketExists(ticketId);
-        if (!ticketExists) {
+        if (!numberReceiverFacade.ticketExists(ticketId)) {
             return ResultAnnouncement.builder()
                     .status(ResultStatus.TICKET_NOT_FOUND)
                     .result(null)
                     .build();
         }
 
-        TicketResult ticketResult;
-        try {
-            ticketResult = resultCheckerFacade.getResultForTicket(ticketId);
-        } catch (TicketResultNotFoundException e) {
+        Optional<TicketResult> ticketResult = resultCheckerFacade.getResultForTicket(ticketId);
+        if (ticketResult.isEmpty()) {
             return ResultAnnouncement.builder()
                     .status(ResultStatus.WAITING_FOR_DRAW)
                     .result(null)
                     .build();
         }
 
-        WinningNumbers winningNumbers = numberGenerator.retrieveWinningNumbersByDate(ticketResult.getDrawDate());
-        ResultResponse saved = buildAndSaveResult(ticketResult, winningNumbers.getWinningNumbers());
+        WinningNumbers winningNumbers = numberGenerator.retrieveWinningNumbersByDate(ticketResult.get().getDrawDate());
+        ResultResponse saved = buildAndSaveResult(ticketResult.get(), winningNumbers.getWinningNumbers());
 
         return ResultAnnouncement.builder()
-                .status(ticketResult.isWinner() ? ResultStatus.WIN_MESSAGE : ResultStatus.LOSE_MESSAGE)
+                .status(saved.isWinner() ? ResultStatus.WIN_MESSAGE : ResultStatus.LOSE_MESSAGE)
                 .result(saved)
                 .build();
     }

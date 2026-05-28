@@ -16,9 +16,9 @@ import pl.pkasiewicz.lottogame.resultannouncer.testhelpers.InMemoryResultRespons
 import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultId;
-import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFoundException;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -114,7 +114,7 @@ class ResultAnnouncerFacadeTest {
     public void should_return_waiting_for_draw_status_if_draw_not_yet_occurred() {
         // given
         when(numberReceiverFacade.ticketExists(any(UUID.class))).thenReturn(true);
-        when(resultCheckerFacade.getResultForTicket(any(UUID.class))).thenThrow(TicketResultNotFoundException.class);
+        when(resultCheckerFacade.getResultForTicket(any(UUID.class))).thenReturn(Optional.empty());
 
         // when
         ResultAnnouncement result = resultAnnouncerFacade.checkResult(UUID.randomUUID());
@@ -151,7 +151,7 @@ class ResultAnnouncerFacadeTest {
         when(numberReceiverFacade.ticketExists(any(UUID.class)))
                 .thenReturn(true);
         when(resultCheckerFacade.getResultForTicket(ticketResult.getTicketId()))
-                .thenReturn(ticketResult);
+                .thenReturn(Optional.of(ticketResult));
         when(numberGenerator.retrieveWinningNumbersByDate(any(LocalDateTime.class)))
                 .thenReturn(new WinningNumbers(
                         new WinningNumbersId(UUID.randomUUID()),
