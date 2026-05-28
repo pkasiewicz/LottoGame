@@ -9,6 +9,5 @@ public interface NumberReceiverUseCase {
 
     Ticket inputNumbers(Set<Integer> numbers);
     List<Ticket> retrieveAllTicketsByNextDrawDate(LocalDateTime nextDrawDate);
-
     boolean ticketExists(UUID ticketId);
 }

@@ -98,7 +98,7 @@ class ResultAnnouncerControllerTest {
 
         // when && then
         mockMvc.perform(get("/api/results/{ticketId}", ticketId))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("TICKET_NOT_FOUND"))
                 .andExpect(jsonPath("$.result").doesNotExist());
     }

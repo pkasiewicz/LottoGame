@@ -6,6 +6,6 @@ import java.util.Set;
 
 public record InputNumbersRequestDto(
         @NotNull(message = "Numbers cannot be null")
-        Set<Integer> numbers
+        Set<@NotNull Integer> numbers
 ) {
 }
