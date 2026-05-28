@@ -4,10 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pkasiewicz.lottogame.numbergenerator.infrastructure.scheduler.WinningNumbersScheduler;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.port.TicketRepository;
 import pl.pkasiewicz.lottogame.numberreceiver.infrastructure.api.dto.TicketResponseDto;
-import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponseRepository;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultResponseRepository;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.TicketResultRepository;
 import pl.pkasiewicz.lottogame.resultchecker.infrastructure.scheduler.ResultCheckerScheduler;
 
 import java.time.LocalDateTime;

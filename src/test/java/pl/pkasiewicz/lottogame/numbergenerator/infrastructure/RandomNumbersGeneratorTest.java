@@ -1,6 +1,7 @@
 package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
 
 import org.junit.jupiter.api.Test;
+import pl.pkasiewicz.lottogame.numbergenerator.infrastructure.adapter.RandomNumbersGenerator;
 
 import java.util.Set;
 

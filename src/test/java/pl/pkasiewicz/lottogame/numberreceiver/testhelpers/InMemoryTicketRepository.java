@@ -1,7 +1,7 @@
 package pl.pkasiewicz.lottogame.numberreceiver.testhelpers;
 
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.port.TicketRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

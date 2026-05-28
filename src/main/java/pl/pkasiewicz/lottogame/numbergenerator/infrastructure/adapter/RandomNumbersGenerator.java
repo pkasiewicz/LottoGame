@@ -1,7 +1,7 @@
-package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
+package pl.pkasiewicz.lottogame.numbergenerator.infrastructure.adapter;
 
 import org.springframework.stereotype.Component;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.RandomNumbersGeneratorPort;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.RandomNumbersGeneratorPort;
 
 import java.util.HashSet;
 import java.util.Random;

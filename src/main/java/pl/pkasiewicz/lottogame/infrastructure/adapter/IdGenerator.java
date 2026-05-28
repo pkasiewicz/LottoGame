@@ -1,7 +1,7 @@
-package pl.pkasiewicz.lottogame.infrastructure;
+package pl.pkasiewicz.lottogame.infrastructure.adapter;
 
 import org.springframework.stereotype.Component;
-import pl.pkasiewicz.lottogame.domain.IdGenerable;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
 
 import java.util.UUID;
 

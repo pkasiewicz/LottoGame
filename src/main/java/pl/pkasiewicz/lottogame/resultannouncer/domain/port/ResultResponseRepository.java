@@ -1,4 +1,6 @@
-package pl.pkasiewicz.lottogame.resultannouncer.domain;
+package pl.pkasiewicz.lottogame.resultannouncer.domain.port;
+
+import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
 
 import java.util.Optional;
 import java.util.UUID;

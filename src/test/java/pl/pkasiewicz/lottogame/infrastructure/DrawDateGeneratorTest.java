@@ -1,6 +1,7 @@
 package pl.pkasiewicz.lottogame.infrastructure;
 
 import org.junit.jupiter.api.Test;
+import pl.pkasiewicz.lottogame.infrastructure.adapter.DrawDateGenerator;
 
 import java.time.Clock;
 import java.time.LocalDateTime;

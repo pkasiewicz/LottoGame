@@ -2,10 +2,10 @@ package pl.pkasiewicz.lottogame.integration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.WinningNumbersGeneratorUseCase;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.exception.WinningNumbersNotFoundException;
 import pl.pkasiewicz.lottogame.numberreceiver.infrastructure.api.dto.TicketResponseDto;
-import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.ResultCheckerUseCase;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

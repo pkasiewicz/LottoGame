@@ -2,10 +2,13 @@ package pl.pkasiewicz.lottogame.numbergenerator.application;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
-import pl.pkasiewicz.lottogame.domain.IdGenerable;
+import pl.pkasiewicz.lottogame.domain.port.DrawDateGenerable;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.*;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.exception.WinningNumbersNotFoundException;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.RandomNumbersGeneratorPort;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.WinningNumbersGeneratorUseCase;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.WinningNumbersRepository;
 
 import java.time.LocalDateTime;
 import java.util.Set;
