@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
 import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
-import pl.pkasiewicz.lottogame.infrastructure.adapter.IdGenerator;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultAnnouncement;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultStatus;
