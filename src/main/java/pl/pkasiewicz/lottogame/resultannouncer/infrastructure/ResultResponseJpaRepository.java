@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface ResultResponseJpaRepository extends JpaRepository<ResultResponseEntity, UUID> {
     Optional<ResultResponseEntity> findByTicketId(UUID ticketId);
+    void deleteAll();
 }

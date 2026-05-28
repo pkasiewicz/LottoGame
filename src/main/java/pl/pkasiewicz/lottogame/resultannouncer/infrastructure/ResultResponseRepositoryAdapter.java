@@ -25,4 +25,9 @@ public class ResultResponseRepositoryAdapter implements ResultResponseRepository
         return repository.findByTicketId(ticketId)
                 .map(ResultResponseEntity::toDomain);
     }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 }

@@ -10,4 +10,6 @@ public interface TicketRepository {
     Ticket save(Ticket ticket);
     List<Ticket> findAllTicketsByDrawDate(LocalDateTime drawDate);
     Optional<Ticket> findById(UUID id);
+    List<Ticket> findAll();
+    void deleteAll();
 }

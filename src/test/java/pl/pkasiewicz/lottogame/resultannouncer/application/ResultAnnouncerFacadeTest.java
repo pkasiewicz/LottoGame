@@ -8,6 +8,7 @@ import pl.pkasiewicz.lottogame.infrastructure.IdGenerator;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersId;
+import pl.pkasiewicz.lottogame.numberreceiver.application.NumberReceiverFacade;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultAnnouncement;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultStatus;
@@ -17,9 +18,7 @@ import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultId;
 import pl.pkasiewicz.lottogame.resultchecker.domain.exception.TicketResultNotFoundException;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,6 +35,7 @@ class ResultAnnouncerFacadeTest {
     public static final Set<Integer> WINNING_NUMBERS = Set.of(1, 2, 3, 4, 5, 6);
 
     private ResultAnnouncerFacade resultAnnouncerFacade;
+    private NumberReceiverFacade numberReceiverFacade;
     private ResultCheckerUseCase resultCheckerFacade;
     private WinningNumbersGeneratorUseCase numberGenerator;
 
@@ -43,15 +43,16 @@ class ResultAnnouncerFacadeTest {
     @BeforeEach
     void setUp() {
         InMemoryResultResponseRepository repository = new InMemoryResultResponseRepository();
+        numberReceiverFacade = mock(NumberReceiverFacade.class);
         resultCheckerFacade = mock(ResultCheckerUseCase.class);
         numberGenerator = mock(WinningNumbersGeneratorUseCase.class);
 
         resultAnnouncerFacade = new ResultAnnouncerFacade(
                 repository,
+                numberReceiverFacade,
                 resultCheckerFacade,
                 numberGenerator,
-                new IdGenerator(),
-                Clock.systemUTC()
+                new IdGenerator()
         );
     }
 
@@ -86,7 +87,7 @@ class ResultAnnouncerFacadeTest {
     @Test
     public void should_return_ticket_not_found_status_for_non_existing_ticket() {
         // given
-        when(resultCheckerFacade.getResultForTicket(any(UUID.class))).thenThrow(TicketResultNotFoundException.class);
+        when(numberReceiverFacade.ticketExists(any(UUID.class))).thenReturn(false);
 
         // when
         ResultAnnouncement result = resultAnnouncerFacade.checkResult(UUID.randomUUID());
@@ -112,7 +113,8 @@ class ResultAnnouncerFacadeTest {
     @Test
     public void should_return_waiting_for_draw_status_if_draw_not_yet_occurred() {
         // given
-        when(resultCheckerFacade.getDrawDateForTicket(any(UUID.class))).thenReturn(Optional.empty());
+        when(numberReceiverFacade.ticketExists(any(UUID.class))).thenReturn(true);
+        when(resultCheckerFacade.getResultForTicket(any(UUID.class))).thenThrow(TicketResultNotFoundException.class);
 
         // when
         ResultAnnouncement result = resultAnnouncerFacade.checkResult(UUID.randomUUID());
@@ -146,10 +148,10 @@ class ResultAnnouncerFacadeTest {
     }
 
     private void mockTicketResultAndWinningNumbers(TicketResult ticketResult) {
+        when(numberReceiverFacade.ticketExists(any(UUID.class)))
+                .thenReturn(true);
         when(resultCheckerFacade.getResultForTicket(ticketResult.getTicketId()))
                 .thenReturn(ticketResult);
-        when(resultCheckerFacade.getDrawDateForTicket(ticketResult.getTicketId()))
-                .thenReturn(Optional.of(DRAW_DATE));
         when(numberGenerator.retrieveWinningNumbersByDate(any(LocalDateTime.class)))
                 .thenReturn(new WinningNumbers(
                         new WinningNumbersId(UUID.randomUUID()),

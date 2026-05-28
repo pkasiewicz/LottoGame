@@ -32,4 +32,14 @@ public class InMemoryTicketRepository implements TicketRepository {
     public Optional<Ticket> findById(UUID id) {
         return Optional.ofNullable(db.get(id));
     }
+
+    @Override
+    public List<Ticket> findAll() {
+        return db.values().stream().toList();
+    }
+
+    @Override
+    public void deleteAll() {
+        db.clear();
+    }
 }

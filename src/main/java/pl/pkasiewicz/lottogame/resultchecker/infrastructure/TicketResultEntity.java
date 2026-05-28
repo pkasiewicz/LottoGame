@@ -1,7 +1,12 @@
 package pl.pkasiewicz.lottogame.resultchecker.infrastructure;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
@@ -25,11 +30,11 @@ public class TicketResultEntity {
     private UUID ticketId;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", nullable = false)
     private Set<Integer> userNumbers;
 
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "jsonb", nullable = false)
     private Set<Integer> hitNumbers;
 
     @Column(nullable = false)

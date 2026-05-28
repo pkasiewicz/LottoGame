@@ -7,4 +7,5 @@ public interface ResultResponseRepository {
 
     ResultResponse save(ResultResponse resultResponse);
     Optional<ResultResponse> findByTicketId(UUID ticketId);
+    void deleteAll();
 }

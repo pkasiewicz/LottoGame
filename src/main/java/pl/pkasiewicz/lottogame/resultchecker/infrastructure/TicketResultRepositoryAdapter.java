@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TicketResultRepositoryAdapter implements TicketResultRepository {
 
-    private final TicketResultJpaRepository  repository;
+    private final TicketResultJpaRepository repository;
 
     @Override
     public TicketResult save(TicketResult ticketResult) {
@@ -24,5 +25,17 @@ public class TicketResultRepositoryAdapter implements TicketResultRepository {
     public Optional<TicketResult> findByTicketId(UUID ticketId) {
         return repository.findByTicketId(ticketId)
                 .map(TicketResultEntity::toDomain);
+    }
+
+    @Override
+    public List<TicketResult> findAll() {
+        return repository.findAll().stream()
+                .map(TicketResultEntity::toDomain)
+                .toList();
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
     }
 }

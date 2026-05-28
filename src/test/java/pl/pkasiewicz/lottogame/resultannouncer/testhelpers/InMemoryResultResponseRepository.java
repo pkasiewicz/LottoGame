@@ -25,4 +25,9 @@ public class InMemoryResultResponseRepository implements ResultResponseRepositor
                 .filter(resultResponse -> resultResponse.getTicketId().equals(ticketId))
                 .findAny();
     }
+
+    @Override
+    public void deleteAll() {
+        db.clear();
+    }
 }
