@@ -4,15 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.pkasiewicz.lottogame.domain.DrawDateGenerable;
-import pl.pkasiewicz.lottogame.domain.IdGenerable;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersId;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketId;
+import pl.pkasiewicz.lottogame.domain.port.DrawDateGenerable;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
+import pl.pkasiewicz.lottogame.resultchecker.domain.TicketData;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.TicketProvider;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
+import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
 import pl.pkasiewicz.lottogame.resultchecker.testhelpers.InMemoryTicketResultRepository;
 
 import java.time.LocalDateTime;
@@ -34,23 +31,23 @@ class ResultCheckerFacadeTest {
 
     private ResultCheckerFacade resultCheckerFacade;
     private InMemoryTicketResultRepository repository;
-    private WinningNumbersGeneratorUseCase numberGenerator;
-    private NumberReceiverUseCase numberReceiver;
+    private WinningNumbersProvider winningNumbersProvider;
+    private TicketProvider ticketProvider;
     private DrawDateGenerable drawDateGenerator;
     private IdGenerable idGenerator;
 
     @BeforeEach
     void setUp() {
         repository = new InMemoryTicketResultRepository();
-        numberGenerator = mock(WinningNumbersGeneratorUseCase.class);
-        numberReceiver = mock(NumberReceiverUseCase.class);
+        winningNumbersProvider = mock(WinningNumbersProvider.class);
+        ticketProvider = mock(TicketProvider.class);
         drawDateGenerator = mock(DrawDateGenerable.class);
         idGenerator = mock(IdGenerable.class);
 
         resultCheckerFacade = new ResultCheckerFacade(
                 repository,
-                numberGenerator,
-                numberReceiver,
+                winningNumbersProvider,
+                ticketProvider,
                 drawDateGenerator,
                 idGenerator
         );
@@ -186,7 +183,7 @@ class ResultCheckerFacadeTest {
     public void should_return_empty_list_when_no_tickets_for_draw_date() {
         // given
         when(drawDateGenerator.getNextDrawDate()).thenReturn(DRAW_DATE);
-        when(numberReceiver.retrieveAllTicketsByNextDrawDate(DRAW_DATE)).thenReturn(List.of());
+        when(ticketProvider.getTicketsByDrawDate(DRAW_DATE)).thenReturn(List.of());
 
         mockWinningNumbers();
 
@@ -283,33 +280,28 @@ class ResultCheckerFacadeTest {
     }
 
     private void mockWinningNumbers() {
-        when(numberGenerator.retrieveWinningNumbersByDate(DRAW_DATE))
-                .thenReturn(new WinningNumbers(
-                        new WinningNumbersId(UUID.fromString("00000000-0000-0000-0000-000000000001")),
-                        WINNING_NUMBERS,
-                        DRAW_DATE)
-                );
-        when(numberGenerator.areWinningNumbersGeneratedByDate()).thenReturn(true);
+        when(winningNumbersProvider.getWinningNumbersByDate(DRAW_DATE)).thenReturn(WINNING_NUMBERS);
+        when(winningNumbersProvider.areWinningNumbersGeneratedByDate()).thenReturn(true);
     }
 
     private void mockSingleTicket(Set<Integer> numbers) {
-        Ticket ticket = new Ticket(
-                new TicketId(UUID.randomUUID()),
+        TicketData ticketData = new TicketData(
+                UUID.randomUUID(),
                 numbers,
                 DRAW_DATE
         );
 
-        when(numberReceiver.retrieveAllTicketsByNextDrawDate(DRAW_DATE)).thenReturn(List.of(ticket));
+        when(ticketProvider.getTicketsByDrawDate(DRAW_DATE)).thenReturn(List.of(ticketData));
     }
 
     private void mockTickets(List<Set<Integer>> listOfNumbers) {
-        List<Ticket> tickets = listOfNumbers.stream()
-                .map(numbers -> new Ticket(
-                        new TicketId(UUID.randomUUID()),
+        List<TicketData> ticketsData = listOfNumbers.stream()
+                .map(numbers -> new TicketData(
+                        UUID.randomUUID(),
                         numbers,
                         DRAW_DATE))
                 .toList();
 
-        when(numberReceiver.retrieveAllTicketsByNextDrawDate(DRAW_DATE)).thenReturn(tickets);
+        when(ticketProvider.getTicketsByDrawDate(DRAW_DATE)).thenReturn(ticketsData);
     }
 }

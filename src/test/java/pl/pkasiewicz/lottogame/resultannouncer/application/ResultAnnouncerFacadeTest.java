@@ -4,18 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.pkasiewicz.lottogame.infrastructure.IdGenerator;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersGeneratorUseCase;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersId;
-import pl.pkasiewicz.lottogame.numberreceiver.application.NumberReceiverFacade;
+import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
+import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
+import pl.pkasiewicz.lottogame.infrastructure.adapter.IdGenerator;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultAnnouncement;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultStatus;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.TicketResultData;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.TicketExistenceChecker;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.TicketResultProvider;
 import pl.pkasiewicz.lottogame.resultannouncer.testhelpers.InMemoryResultResponseRepository;
-import pl.pkasiewicz.lottogame.resultchecker.domain.ResultCheckerUseCase;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultId;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -35,35 +33,37 @@ class ResultAnnouncerFacadeTest {
     public static final Set<Integer> WINNING_NUMBERS = Set.of(1, 2, 3, 4, 5, 6);
 
     private ResultAnnouncerFacade resultAnnouncerFacade;
-    private NumberReceiverFacade numberReceiverFacade;
-    private ResultCheckerUseCase resultCheckerFacade;
-    private WinningNumbersGeneratorUseCase numberGenerator;
-
+    private TicketExistenceChecker ticketExistenceChecker;
+    private TicketResultProvider ticketResultProvider;
+    private WinningNumbersProvider winningNumbersProvider;
+    private IdGenerable idGenerator;
 
     @BeforeEach
     void setUp() {
         InMemoryResultResponseRepository repository = new InMemoryResultResponseRepository();
-        numberReceiverFacade = mock(NumberReceiverFacade.class);
-        resultCheckerFacade = mock(ResultCheckerUseCase.class);
-        numberGenerator = mock(WinningNumbersGeneratorUseCase.class);
+        ticketExistenceChecker = mock(TicketExistenceChecker.class);
+        ticketResultProvider = mock(TicketResultProvider.class);
+        winningNumbersProvider = mock(WinningNumbersProvider.class);
+        idGenerator = mock(IdGenerable.class);
 
         resultAnnouncerFacade = new ResultAnnouncerFacade(
                 repository,
-                numberReceiverFacade,
-                resultCheckerFacade,
-                numberGenerator,
-                new IdGenerator()
+                ticketExistenceChecker,
+                ticketResultProvider,
+                winningNumbersProvider,
+                idGenerator
         );
     }
 
     @Test
     public void should_return_win_status_for_winning_ticket() {
         // given
-        TicketResult ticketResult = createWinningTicketResult();
+
+        TicketResultData ticketResult = createWinningTicketResultData();
         mockTicketResultAndWinningNumbers(ticketResult);
 
         // when
-        ResultAnnouncement result = resultAnnouncerFacade.checkResult(ticketResult.getTicketId());
+        ResultAnnouncement result = resultAnnouncerFacade.checkResult(ticketResult.ticketId());
 
         // then
         assertThat(result.status()).isEqualTo(ResultStatus.WIN_MESSAGE);
@@ -73,11 +73,11 @@ class ResultAnnouncerFacadeTest {
     @Test
     public void should_return_lose_status_for_losing_ticket() {
         // given
-        TicketResult ticketResult = createLosingTicketResult();
+        TicketResultData ticketResult = createLosingTicketResultData();
         mockTicketResultAndWinningNumbers(ticketResult);
 
         // when
-        ResultAnnouncement result = resultAnnouncerFacade.checkResult(ticketResult.getTicketId());
+        ResultAnnouncement result = resultAnnouncerFacade.checkResult(ticketResult.ticketId());
 
         // then
         assertThat(result.status()).isEqualTo(ResultStatus.LOSE_MESSAGE);
@@ -87,7 +87,7 @@ class ResultAnnouncerFacadeTest {
     @Test
     public void should_return_ticket_not_found_status_for_non_existing_ticket() {
         // given
-        when(numberReceiverFacade.ticketExists(any(UUID.class))).thenReturn(false);
+        when(ticketExistenceChecker.ticketExistsById(any(UUID.class))).thenReturn(false);
 
         // when
         ResultAnnouncement result = resultAnnouncerFacade.checkResult(UUID.randomUUID());
@@ -99,12 +99,12 @@ class ResultAnnouncerFacadeTest {
     @Test
     public void should_return_already_checked_status_for_cached_ticket() {
         // given
-        TicketResult ticketResult = createWinningTicketResult();
+        TicketResultData ticketResult = createWinningTicketResultData();
         mockTicketResultAndWinningNumbers(ticketResult);
-        resultAnnouncerFacade.checkResult(ticketResult.getTicketId());
+        resultAnnouncerFacade.checkResult(ticketResult.ticketId());
 
         // when
-        ResultAnnouncement result = resultAnnouncerFacade.checkResult(ticketResult.getTicketId());
+        ResultAnnouncement result = resultAnnouncerFacade.checkResult(ticketResult.ticketId());
 
         // then
         assertThat(result.status()).isEqualTo(ResultStatus.ALREADY_CHECKED);
@@ -113,8 +113,8 @@ class ResultAnnouncerFacadeTest {
     @Test
     public void should_return_waiting_for_draw_status_if_draw_not_yet_occurred() {
         // given
-        when(numberReceiverFacade.ticketExists(any(UUID.class))).thenReturn(true);
-        when(resultCheckerFacade.getResultForTicket(any(UUID.class))).thenReturn(Optional.empty());
+        when(ticketExistenceChecker.ticketExistsById(any(UUID.class))).thenReturn(true);
+        when(ticketResultProvider.getResultForTicket(any(UUID.class))).thenReturn(Optional.empty());
 
         // when
         ResultAnnouncement result = resultAnnouncerFacade.checkResult(UUID.randomUUID());
@@ -123,9 +123,9 @@ class ResultAnnouncerFacadeTest {
         assertThat(result.status()).isEqualTo(ResultStatus.WAITING_FOR_DRAW);
     }
 
-    private TicketResult createWinningTicketResult() {
-        return new TicketResult(
-                new TicketResultId(UUID.randomUUID()),
+    private TicketResultData createWinningTicketResultData() {
+        return new TicketResultData(
+                UUID.randomUUID(),
                 UUID.randomUUID(),
                 Set.of(1, 2, 3, 4, 5, 6),
                 Set.of(1, 2, 3, 4, 5, 6),
@@ -135,9 +135,9 @@ class ResultAnnouncerFacadeTest {
         );
     }
 
-    private TicketResult createLosingTicketResult() {
-        return new TicketResult(
-                new TicketResultId(UUID.randomUUID()),
+    private TicketResultData createLosingTicketResultData() {
+        return new TicketResultData(
+                UUID.randomUUID(),
                 UUID.randomUUID(),
                 Set.of(7, 8, 9, 10, 11, 12),
                 Set.of(),
@@ -147,27 +147,24 @@ class ResultAnnouncerFacadeTest {
         );
     }
 
-    private void mockTicketResultAndWinningNumbers(TicketResult ticketResult) {
-        when(numberReceiverFacade.ticketExists(any(UUID.class)))
+    private void mockTicketResultAndWinningNumbers(TicketResultData ticketResult) {
+        when(ticketExistenceChecker.ticketExistsById(any(UUID.class)))
                 .thenReturn(true);
-        when(resultCheckerFacade.getResultForTicket(ticketResult.getTicketId()))
+        when(ticketResultProvider.getResultForTicket(ticketResult.ticketId()))
                 .thenReturn(Optional.of(ticketResult));
-        when(numberGenerator.retrieveWinningNumbersByDate(any(LocalDateTime.class)))
-                .thenReturn(new WinningNumbers(
-                        new WinningNumbersId(UUID.randomUUID()),
-                        WINNING_NUMBERS,
-                        DRAW_DATE
-                ));
+        when(winningNumbersProvider.getWinningNumbersByDate(DRAW_DATE)).thenReturn(WINNING_NUMBERS);
+        when(idGenerator.generateId()).thenAnswer(inv -> UUID.randomUUID());
+
     }
 
-    private void assertResultEquals(ResultResponse actual, TicketResult expected) {
+    private void assertResultEquals(ResultResponse actual, TicketResultData expected) {
         assertAll(
-                () -> assertThat(actual.getTicketId()).isEqualTo(expected.getTicketId()),
-                () -> assertThat(actual.getUserNumbers()).isEqualTo(expected.getUserNumbers()),
+                () -> assertThat(actual.getTicketId()).isEqualTo(expected.ticketId()),
+                () -> assertThat(actual.getUserNumbers()).isEqualTo(expected.userNumbers()),
                 () -> assertThat(actual.getWonNumbers()).isEqualTo(WINNING_NUMBERS),
-                () -> assertThat(actual.getHitNumbers()).isEqualTo(expected.getHitNumbers()),
-                () -> assertThat(actual.getHitCount()).isEqualTo(expected.getHitCount()),
-                () -> assertThat(actual.getDrawDate()).isEqualTo(expected.getDrawDate()),
+                () -> assertThat(actual.getHitNumbers()).isEqualTo(expected.hitNumbers()),
+                () -> assertThat(actual.getHitCount()).isEqualTo(expected.hitCount()),
+                () -> assertThat(actual.getDrawDate()).isEqualTo(expected.drawDate()),
                 () -> assertThat(actual.isWinner()).isEqualTo(expected.isWinner())
         );
     }

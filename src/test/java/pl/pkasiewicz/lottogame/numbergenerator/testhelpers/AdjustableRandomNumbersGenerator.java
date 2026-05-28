@@ -1,6 +1,6 @@
 package pl.pkasiewicz.lottogame.numbergenerator.testhelpers;
 
-import pl.pkasiewicz.lottogame.numbergenerator.domain.RandomNumbersGeneratorPort;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.RandomNumbersGeneratorPort;
 
 import java.util.Set;
 

@@ -6,7 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import pl.pkasiewicz.lottogame.numberreceiver.domain.NumberReceiverUseCase;
+import pl.pkasiewicz.lottogame.numberreceiver.domain.port.NumberReceiverUseCase;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketId;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.exception.InvalidTicketNumbersException;

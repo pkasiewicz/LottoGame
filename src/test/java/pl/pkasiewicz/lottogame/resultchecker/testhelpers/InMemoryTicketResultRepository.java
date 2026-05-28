@@ -1,7 +1,7 @@
 package pl.pkasiewicz.lottogame.resultchecker.testhelpers;
 
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
-import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
+import pl.pkasiewicz.lottogame.resultchecker.domain.port.TicketResultRepository;
 
 import java.util.List;
 import java.util.Map;

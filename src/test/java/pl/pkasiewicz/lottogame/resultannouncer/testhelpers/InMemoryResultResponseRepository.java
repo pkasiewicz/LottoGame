@@ -1,7 +1,7 @@
 package pl.pkasiewicz.lottogame.resultannouncer.testhelpers;
 
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
-import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponseRepository;
+import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultResponseRepository;
 
 import java.util.Map;
 import java.util.Optional;

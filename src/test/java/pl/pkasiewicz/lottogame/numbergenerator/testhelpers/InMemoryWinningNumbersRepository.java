@@ -1,7 +1,7 @@
 package pl.pkasiewicz.lottogame.numbergenerator.testhelpers;
 
 import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbers;
-import pl.pkasiewicz.lottogame.numbergenerator.domain.WinningNumbersRepository;
+import pl.pkasiewicz.lottogame.numbergenerator.domain.port.WinningNumbersRepository;
 
 import java.time.LocalDateTime;
 import java.util.Map;
