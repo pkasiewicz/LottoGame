@@ -1,11 +1,11 @@
-package pl.pkasiewicz.lottogame.numbergenerator.infrastructure;
+package pl.pkasiewicz.lottogame.numbergenerator.application;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class NumbersGeneratorConfig {
+public class NumbersGeneratorConfiguration {
 
     @Bean
     public RestTemplate restTemplate() {
