@@ -19,13 +19,13 @@ public class TicketResult {
     private final LocalDateTime drawDate;
     private final boolean isWinner;
 
-    public static TicketResult fromTicket(Ticket ticket, Set<Integer> winningNumbers) {
+    public static TicketResult fromTicket(Ticket ticket, Set<Integer> winningNumbers, TicketResultId ticketResultId) {
         Set<Integer> hitNumbers = ticket.getNumbers().stream()
                 .filter(winningNumbers::contains)
                 .collect(Collectors.toSet());
 
         return new TicketResult(
-                new TicketResultId(UUID.randomUUID()),
+                ticketResultId,
                 ticket.getId().value(),
                 ticket.getNumbers(),
                 hitNumbers,
