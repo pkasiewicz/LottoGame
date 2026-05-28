@@ -1,16 +1,12 @@
 package pl.pkasiewicz.lottogame.integration;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import pl.pkasiewicz.lottogame.numbergenerator.infrastructure.scheduler.WinningNumbersScheduler;
 import pl.pkasiewicz.lottogame.numberreceiver.domain.TicketRepository;
 import pl.pkasiewicz.lottogame.numberreceiver.infrastructure.api.dto.TicketResponseDto;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponseRepository;
-import pl.pkasiewicz.lottogame.resultannouncer.infrastructure.api.dto.ResultAnnouncementDto;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
 import pl.pkasiewicz.lottogame.resultchecker.infrastructure.scheduler.ResultCheckerScheduler;
 
@@ -18,11 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

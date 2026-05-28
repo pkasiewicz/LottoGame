@@ -1,10 +1,12 @@
 package pl.pkasiewicz.lottogame.resultchecker.testhelpers;
 
-import pl.pkasiewicz.lottogame.numberreceiver.domain.Ticket;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResult;
 import pl.pkasiewicz.lottogame.resultchecker.domain.TicketResultRepository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryTicketResultRepository implements TicketResultRepository {
