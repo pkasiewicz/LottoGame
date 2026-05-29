@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
-import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.*;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultAnnouncerUseCase;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.port.ResultResponseRepository;
@@ -12,7 +11,6 @@ import pl.pkasiewicz.lottogame.resultannouncer.domain.port.TicketExistenceChecke
 import pl.pkasiewicz.lottogame.resultannouncer.domain.port.TicketResultProvider;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 /**
