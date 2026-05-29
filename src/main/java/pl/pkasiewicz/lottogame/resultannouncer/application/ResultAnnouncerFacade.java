@@ -2,6 +2,7 @@ package pl.pkasiewicz.lottogame.resultannouncer.application;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
 import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.*;
@@ -25,9 +26,9 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
     private final ResultResponseRepository repository;
     private final TicketExistenceChecker ticketExistenceChecker;
     private final TicketResultProvider ticketResultProvider;
-    private final WinningNumbersProvider winningNumbersProvider;
     private final IdGenerable idGenerator;
 
+    @Transactional
     @Override
     public ResultAnnouncement checkResult(UUID ticketId) {
         Optional<ResultResponse> cached = repository.findByTicketId(ticketId);
@@ -53,8 +54,7 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                     .build();
         }
 
-        Set<Integer> winningNumbers = winningNumbersProvider.getWinningNumbersByDate(ticketResult.get().drawDate());
-        ResultResponse saved = buildAndSaveResult(ticketResult.get(), winningNumbers);
+        ResultResponse saved = buildAndSaveResult(ticketResult.get());
 
         return ResultAnnouncement.builder()
                 .status(saved.isWinner() ? ResultStatus.WIN_MESSAGE : ResultStatus.LOSE_MESSAGE)
@@ -62,13 +62,13 @@ public class ResultAnnouncerFacade implements ResultAnnouncerUseCase {
                 .build();
     }
 
-    private ResultResponse buildAndSaveResult(TicketResultData ticketResult, Set<Integer> winningNumbers) {
+    private ResultResponse buildAndSaveResult(TicketResultData ticketResult) {
         return repository.save(
                 new ResultResponse(
                         new ResultResponseId(idGenerator.generateId()),
                         ticketResult.ticketId(),
                         ticketResult.userNumbers(),
-                        winningNumbers,
+                        ticketResult.wonNumbers(),
                         ticketResult.hitNumbers(),
                         ticketResult.hitCount(),
                         ticketResult.drawDate(),

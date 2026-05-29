@@ -8,6 +8,7 @@ public record TicketResultData(
         UUID id,
         UUID ticketId,
         Set<Integer>userNumbers,
+        Set<Integer> wonNumbers,
         Set<Integer> hitNumbers,
         int hitCount,
         LocalDateTime drawDate,

@@ -21,6 +21,7 @@ class TicketResultProviderAdapter implements TicketResultProvider {
                 result.getId().value(),
                 result.getTicketId(),
                 result.getUserNumbers(),
+                result.getWonNumbers(),
                 result.getHitNumbers(),
                 result.getHitCount(),
                 result.getDrawDate(),
