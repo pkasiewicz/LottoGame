@@ -37,6 +37,10 @@ public class TicketResultEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
+    private Set<Integer> wonNumbers;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
     private Set<Integer> hitNumbers;
 
     @Column(nullable = false)
@@ -53,6 +57,7 @@ public class TicketResultEntity {
                 new TicketResultId(id),
                 ticketId,
                 userNumbers,
+                wonNumbers,
                 hitNumbers,
                 hitCount,
                 drawDate,
@@ -65,6 +70,7 @@ public class TicketResultEntity {
                 ticketResult.getId().value(),
                 ticketResult.getTicketId(),
                 ticketResult.getUserNumbers(),
+                ticketResult.getWonNumbers(),
                 ticketResult.getHitNumbers(),
                 ticketResult.getHitCount(),
                 ticketResult.getDrawDate(),

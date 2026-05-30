@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.pkasiewicz.lottogame.domain.port.IdGenerable;
-import pl.pkasiewicz.lottogame.domain.port.WinningNumbersProvider;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultAnnouncement;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultResponse;
 import pl.pkasiewicz.lottogame.resultannouncer.domain.ResultStatus;
@@ -34,7 +33,6 @@ class ResultAnnouncerFacadeTest {
     private ResultAnnouncerFacade resultAnnouncerFacade;
     private TicketExistenceChecker ticketExistenceChecker;
     private TicketResultProvider ticketResultProvider;
-    private WinningNumbersProvider winningNumbersProvider;
     private IdGenerable idGenerator;
 
     @BeforeEach
@@ -42,14 +40,12 @@ class ResultAnnouncerFacadeTest {
         InMemoryResultResponseRepository repository = new InMemoryResultResponseRepository();
         ticketExistenceChecker = mock(TicketExistenceChecker.class);
         ticketResultProvider = mock(TicketResultProvider.class);
-        winningNumbersProvider = mock(WinningNumbersProvider.class);
         idGenerator = mock(IdGenerable.class);
 
         resultAnnouncerFacade = new ResultAnnouncerFacade(
                 repository,
                 ticketExistenceChecker,
                 ticketResultProvider,
-                winningNumbersProvider,
                 idGenerator
         );
     }
@@ -128,6 +124,7 @@ class ResultAnnouncerFacadeTest {
                 UUID.randomUUID(),
                 Set.of(1, 2, 3, 4, 5, 6),
                 Set.of(1, 2, 3, 4, 5, 6),
+                Set.of(1, 2, 3, 4, 5, 6),
                 6,
                 DRAW_DATE,
                 true
@@ -139,6 +136,7 @@ class ResultAnnouncerFacadeTest {
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 Set.of(7, 8, 9, 10, 11, 12),
+                Set.of(1, 2, 3, 4, 5, 6),
                 Set.of(),
                 0,
                 DRAW_DATE,
@@ -151,7 +149,6 @@ class ResultAnnouncerFacadeTest {
                 .thenReturn(true);
         when(ticketResultProvider.getResultForTicket(ticketResult.ticketId()))
                 .thenReturn(Optional.of(ticketResult));
-        when(winningNumbersProvider.getWinningNumbersByDate(DRAW_DATE)).thenReturn(WINNING_NUMBERS);
         when(idGenerator.generateId()).thenAnswer(inv -> UUID.randomUUID());
 
     }
@@ -160,7 +157,7 @@ class ResultAnnouncerFacadeTest {
         assertAll(
                 () -> assertThat(actual.getTicketId()).isEqualTo(expected.ticketId()),
                 () -> assertThat(actual.getUserNumbers()).isEqualTo(expected.userNumbers()),
-                () -> assertThat(actual.getWonNumbers()).isEqualTo(WINNING_NUMBERS),
+                () -> assertThat(actual.getWonNumbers()).isEqualTo(expected.wonNumbers()),
                 () -> assertThat(actual.getHitNumbers()).isEqualTo(expected.hitNumbers()),
                 () -> assertThat(actual.getHitCount()).isEqualTo(expected.hitCount()),
                 () -> assertThat(actual.getDrawDate()).isEqualTo(expected.drawDate()),

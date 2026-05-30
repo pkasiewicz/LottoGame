@@ -22,7 +22,7 @@ lotto:
     lowerBand: 1
     upperBand: 99
     api:
-      url: https://www.randomnumberapi.com/api/v1.0/random
+      url: ${NUMBER_GENERATOR_API_URL:https://www.randomnumberapi.com/api/v1.0/random}
     scheduler:
       cron: 0 55 11 ? * SAT
   number-receiver:

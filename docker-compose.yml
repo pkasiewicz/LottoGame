@@ -20,31 +20,30 @@ services:
     networks:
       - lotto-net
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
     ports:
       - "8083:80"
     depends_on:
       - postgres
 
   lotto-backend:
-    image: lotto-backend:latest
+    image: ghcr.io/pkasiewicz/lotto-backend:latest
     container_name: lotto-backend
     restart: always
-    platform: linux/amd64
     depends_on:
       - postgres
     ports:
       - "8084:8084"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:lotto_db}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${DB_HOST:-postgres}:${DB_PORT:-5432}/${DB_NAME:-lotto_db}
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-admin}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-admin}
     networks:
       - lotto-net
 
   lotto-frontend:
-    image: lotto-frontend:latest
+    image: ghcr.io/pkasiewicz/lotto-frontend:latest
     container_name: lotto-frontend
     restart: always
     depends_on:

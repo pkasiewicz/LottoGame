@@ -13,6 +13,7 @@ public class TicketResult {
     private final TicketResultId id;
     private final UUID ticketId;
     private final Set<Integer> userNumbers;
+    private final Set<Integer> wonNumbers;
     private final Set<Integer> hitNumbers;
     private final int hitCount;
     private final LocalDateTime drawDate;
@@ -27,6 +28,7 @@ public class TicketResult {
                 ticketResultId,
                 ticket.ticketId(),
                 ticket.numbers(),
+                winningNumbers,
                 hitNumbers,
                 hitNumbers.size(),
                 ticket.drawDate(),
