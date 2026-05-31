@@ -35,6 +35,6 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd ~/apps/lotto/deploy
-            docker-compose pull lotto-backend
-            docker-compose up -d --force-recreate lotto-backend
+            docker compose pull lotto-backend
+            docker compose up -d --force-recreate lotto-backend
             docker image prune -af --filter "until=24h" || true
